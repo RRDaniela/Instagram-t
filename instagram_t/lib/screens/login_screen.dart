@@ -11,62 +11,63 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[300],
+        backgroundColor: Colors.white,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                'Hello Again!',
+                'Instagram\'t!',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 50),
               const Text(
                 'Log into your account',
                 style: TextStyle(fontSize: 20),
               ),
               const SizedBox(height: 50),
               // Email textfield
+              
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
+                        color: Colors.grey[50],
+                        border: Border.all(color: Colors.grey[100]!),
+                        borderRadius: BorderRadius.circular(30)),
                     child: const Padding(
                       padding: EdgeInsets.only(left: 20),
                       child: TextField(
                         decoration: InputDecoration(
-                          hintText: 'Email',
+                          hintText: 'your_email@example.com',
                           border: InputBorder.none,
                         ),
                       ),
                     )),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 50),
 
               // Password textfield
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
+                        color: Colors.grey[50],
+                        border: Border.all(color: Colors.grey[100]!),
+                        borderRadius: BorderRadius.circular(30)),
                     child: const Padding(
                       padding: EdgeInsets.only(left: 20),
                       child: TextField(
                         obscureText: true,
                         decoration: InputDecoration(
-                          hintText: 'Password',
+                          hintText: '*********',
                           border: InputBorder.none,
                         ),
                       ),
                     )),
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 50),
 
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -74,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.all(20),
                   decoration: BoxDecoration(
                       color: Colors.deepPurple,
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(30)),
                   child: Center(
                       child: Text(
                     'Sign In',
