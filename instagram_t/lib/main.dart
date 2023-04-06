@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_t/screens/login_screen.dart';
+import 'package:instagram_t/screens/signup_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(primarySwatch: Colors.lightGreen),
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: SignupScreen(),
     );
   }
 }
