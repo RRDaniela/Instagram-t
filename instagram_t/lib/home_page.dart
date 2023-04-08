@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:instagram_t/add_post.dart';
 import 'package:instagram_t/item_post.dart';
 import 'package:instagram_t/colors.dart';
 
@@ -88,6 +89,8 @@ class HomePage extends StatelessWidget {
               FloatingActionButton(
                 backgroundColor: AppColors.navBarButton,
                 onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddPost()),
+                  );
                   //TODO: SEND TO ADD SCREEN
                   /*Navigator.push(
                     context,
