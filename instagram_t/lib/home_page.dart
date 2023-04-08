@@ -32,9 +32,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: (AppColors.imageColor),
+      backgroundColor: (AppColors.blackColor),
       appBar: AppBar(
-        backgroundColor: (AppColors.appBar),
+        backgroundColor: (AppColors.blackColor),
         title: Text(
           "Instagramt",
           style: TextStyle(color: AppColors.imageColor),
@@ -42,56 +42,59 @@ class HomePage extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             icon: Icon(
-              Icons.message,
-              color: AppColors.imageColor,
+              Icons.message_outlined,
+              color: AppColors.outlinedIcons,
             ),
             onPressed: () {},
           ),
           IconButton(
               onPressed: () {},
               icon: Icon(
-                Icons.thumb_up_sharp,
-                color: AppColors.imageColor,
+                Icons.favorite_border_outlined,
+                color: AppColors.outlinedIcons,
               ))
         ],
       ),
       body: Column(
         children: [
-          Center(
-            child: Container(
-              height: 550,
-              width: 300,
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemCount: _listElements.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return InstagramtPost(
-                      username: _listElements[index]["username"]!,
-                      likes: _listElements[index]["likes"]!,
-                      imageUrl: _listElements[index]["imageUrl"]!,
-                      caption: _listElements[index]["caption"]!);
-                },
-              ),
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              scrollDirection: Axis.vertical,
+              itemCount: _listElements.length,
+              itemBuilder: (BuildContext context, int index) {
+                return InstagramtPost(
+                    username: _listElements[index]["username"]!,
+                    likes: _listElements[index]["likes"]!,
+                    imageUrl: _listElements[index]["imageUrl"]!,
+                    caption: _listElements[index]["caption"]!);
+              },
             ),
           )
         ],
       ),
       bottomNavigationBar: BottomAppBar(
-        color: AppColors.appBar,
+        color: AppColors.navBar,
         child: Container(
           height: 50.0,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               IconButton(
                 onPressed: () {},
                 icon: Icon(Icons.home),
                 color: AppColors.imageColor,
               ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.add),
-                color: AppColors.imageColor,
+              FloatingActionButton(
+                backgroundColor: AppColors.navBarButton,
+                onPressed: () {
+                  //TODO: SEND TO ADD SCREEN
+                  /*Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddScreen()),
+                  );*/
+                },
+                child: Icon(Icons.add),
               ),
               IconButton(
                 onPressed: () {},
