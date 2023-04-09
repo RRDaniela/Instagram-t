@@ -3,80 +3,183 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:instagram_t/colors.dart';
 
-class AddPost extends StatelessWidget {
+class AddPost extends StatefulWidget {
+  @override
+  State<AddPost> createState() => _AddPostState();
+}
+
+class _AddPostState extends State<AddPost> {
   final picker = ImagePicker();
-
-  Future<File?> _loadImageFromGallery() async {
-    // Get the most recent photo from the gallery
-    final albums = await PhotoManager.getAssetPathList(type: RequestType.image);
-    final recentAlbum = albums.first;
-    final recentAssets = await recentAlbum.getAssetListRange(start: 0, end: 1);
-    final recentAsset = recentAssets.first;
-
-    // Copy the photo to a temporary file
-    final file = await recentAsset.file;
-    final tempDir = await getTemporaryDirectory();
-    final tempPath =
-        '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
-    final tempFile = await file?.copy(tempPath);
-
-    return tempFile;
-  }
+  late ValueNotifier<File?> _selectedImageNotifier;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: AppColors.headerColor,
-          title: Text('Nueva Publicación'),
-        ),
-        body: Column(
-          children: [
-            ClipRRect(
-              child: Container(
-                width: 400,
-                height: 400,
-                child: Center(
-                  child: FutureBuilder<File?>(
-                      future: _loadImageFromGallery(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<File?> snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done &&
-                            snapshot.data != null) {
-                          return Container(
-                            height: MediaQuery.of(context).size.height,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                              color: AppColors.textColorGrey,
-                              image: DecorationImage(
-                                  image: FileImage(snapshot.data!),
-                                  fit: BoxFit.cover),
-                            ),
-                          );
-                        } else {
-                          return Container(
-                            height: MediaQuery.of(context).size.height,
-                            width: MediaQuery.of(context).size.width,
-                            color: Colors.grey,
-                            child: Center(
-                              child: Icon(Icons.image),
-                            ),
-                          );
-                        }
-                      }),
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Text('Galería'),
-                IconButton(onPressed: () {}, icon: Icon(Icons.camera))
-              ],
-            )
-          ],
-        ));
+  void initState(){
+    super.initState();
+    _selectedImageNotifier = ValueNotifier(null);
+    _loadImageFromGallery();
+  }
+
+  Future<void> _loadImageFromGallery() async {
+  // Get the most recent photo from the gallery
+  final albums = await PhotoManager.getAssetPathList(type: RequestType.image);
+  final recentAlbum = albums.first;
+  final recentAssets = await recentAlbum.getAssetListRange(start: 0, end: 1);
+  final recentAsset = recentAssets.first;
+
+  // Copy the photo to a temporary file
+  final file = await recentAsset.file;
+  final tempDir = await getTemporaryDirectory();
+  final tempPath = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+  final tempFile = await file?.copy(tempPath);
+
+  _selectedImageNotifier.value = tempFile;
+}
+
+Future<void> _selectFromGallery() async {
+  final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+  if (pickedFile != null){
+    final tempDir = await getTemporaryDirectory();
+    final tempPath = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final tempFile = await File(pickedFile.path).copy(tempPath);
+
+    _selectedImageNotifier.value = tempFile;
   }
 }
+
+
+Future<List<File>?> _loadRecentImages() async {
+  final albums2 = await PhotoManager.getAssetPathList(type: RequestType.image);
+  final recentAlbum = albums2.first;
+  final recentAssets = await recentAlbum.getAssetListRange(start: 0, end: 6);
+
+  final tempDir = await getTemporaryDirectory();
+  final tempFiles = await Future.wait(recentAssets.map((asset) async {
+    final file = await asset.file;
+    final tempPath = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final tempFile = await file?.copy(tempPath);
+    return tempFile!;
+  }));
+
+  return tempFiles;
+}
+
+
+Future<void> _takePhoto() async {
+  final pickedFile = await picker.pickImage(source: ImageSource.camera);
+  if (pickedFile != null) {
+    final tempDir = await getTemporaryDirectory();
+    final tempPath = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final tempFile = await File(pickedFile.path).copy(tempPath);
+
+
+    _selectedImageNotifier.value = tempFile;
+  }
+}
+
+@override
+void dispose(){
+  _selectedImageNotifier.dispose();
+  super.dispose();
+}
+
+@override
+Widget build(BuildContext context) {
+  File? currentImage; // Keep track of the current image
+
+  return Scaffold(
+    appBar: AppBar(
+      backgroundColor: Color(0xFFFF0B3954),
+      title: Text('Nueva Publicación'),
+    ),
+    body: Column(
+      children: [
+        ClipRRect(
+          child: Container(
+            width: 400,
+            height: 400,
+            child: Center(
+              child: ValueListenableBuilder<File?>(
+                valueListenable: _selectedImageNotifier,
+                builder: (BuildContext context, File? selectedImage, _) {
+                  if(selectedImage != null){
+                    return Container(
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        image: DecorationImage(
+                          image: FileImage(selectedImage),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      color: Colors.grey,
+                      child: Center(
+                        child: Icon(Icons.image),
+                      ),
+                    );
+                  }
+                },
+              )
+                  
+                  
+            ),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              onPressed: _selectFromGallery, 
+              icon: Icon(Icons.photo)),
+            IconButton(
+              onPressed: _takePhoto,
+              icon: Icon(Icons.photo_camera),
+            )
+          ],
+        ),
+        SizedBox(height: 16),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: FutureBuilder<List<File>?>(
+              future: _loadRecentImages(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<File>?> snapshot) {
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.data != null) {
+                  return GridView.count(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    children: snapshot.data!.map((File file) {
+                      return GestureDetector(
+                        onTap: () {
+                          _selectedImageNotifier.value = file;
+                          // Set the tapped image as the current image
+                          /*setState(() {
+                            currentImage = file;
+                          });*/
+                        },
+                        child: Image.file(file, fit: BoxFit.cover),
+                      );
+                    }).toList(),
+                  );
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              },
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+}
+
