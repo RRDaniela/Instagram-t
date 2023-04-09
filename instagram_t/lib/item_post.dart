@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_t/colors.dart';
 
-class InstagramtPost extends StatelessWidget {
+class InstagramtPost extends StatefulWidget {
   final String imageUrl;
   final String username;
   final String caption;
   final String likes;
+  final String profileImageUrl;
   const InstagramtPost(
       {super.key,
       required this.imageUrl,
       required this.username,
       required this.caption,
-      required this.likes});
+      required this.likes,
+      required this.profileImageUrl});
 
   @override
+  State<InstagramtPost> createState() => _InstagramtPostState();
+}
+
+class _InstagramtPostState extends State<InstagramtPost> {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8.0),
@@ -38,13 +44,11 @@ class InstagramtPost extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 20.0,
-                      backgroundImage: NetworkImage(
-                        'https://wac-cdn.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg?cdnVersion=836',
-                      ),
+                      backgroundImage: NetworkImage(widget.profileImageUrl),
                     ),
                     SizedBox(width: 8.0),
                     Text(
-                      username,
+                      widget.username,
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: Colors.white),
                     ),
@@ -58,7 +62,7 @@ class InstagramtPost extends StatelessWidget {
                 width: 400,
                 height: 400,
                 child: Image.network(
-                  imageUrl,
+                  widget.imageUrl,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -98,26 +102,32 @@ class InstagramtPost extends StatelessWidget {
                         padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
                         child: Flexible(
                           child: Text(
-                            username,
+                            widget.username,
                             style: TextStyle(
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textColorGrey),
-                            maxLines: 2,
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                        child: Flexible(
-                          child: Text(
-                            caption,
-                            style: TextStyle(
-                                fontSize: 16.0, color: AppColors.textColorGrey),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                        padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * .55,
+                              child: Text(
+                                widget.caption,
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: AppColors.textColorGrey),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
