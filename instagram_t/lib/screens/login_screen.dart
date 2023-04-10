@@ -1,13 +1,30 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram_t/auth.dart';
+import 'package:instagram_t/home_page.dart';
+import 'package:instagram_t/screens/signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final Auth auth;
+  const LoginScreen({required this.auth, super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  String _error = '';
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,9 +70,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: Colors.grey[50],
                             border: Border.all(color: Colors.grey[100]!),
                             borderRadius: BorderRadius.circular(30)),
-                        child: const Padding(
+                        child: Padding(
                           padding: EdgeInsets.only(left: 20),
                           child: TextField(
+                            controller: _emailController,
                             decoration: InputDecoration(
                               hintText: 'your_email@example.com',
                               border: InputBorder.none,
@@ -84,9 +102,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: Colors.grey[50],
                             border: Border.all(color: Colors.grey[100]!),
                             borderRadius: BorderRadius.circular(30)),
-                        child: const Padding(
+                        child: Padding(
                           padding: EdgeInsets.only(left: 20),
                           child: TextField(
+                            controller: _passwordController,
                             obscureText: true,
                             decoration: InputDecoration(
                               hintText: '*********',
@@ -102,21 +121,70 @@ class _LoginScreenState extends State<LoginScreen> {
 
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: Container(
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                      color: Colors.deepPurple,
-                      borderRadius: BorderRadius.circular(30)),
-                  child: Center(
-                      child: Text(
-                    'Sign In',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  )),
+                child: GestureDetector(
+                  onTap: () async {
+                    print(_emailController.value);
+                    print(_passwordController.value);
+
+                    try {
+                      await widget.auth.signInWithEmailAndPassword(
+                          email: _emailController.text,
+                          password: _passwordController.text);
+
+                      // Add navigator push to home page
+
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomePage(
+                                    auth: widget.auth,
+                                  )));
+                    } on FirebaseException catch (e) {
+                      setState(() {
+                        _error = e.message!;
+                      });
+                      print(e);
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                        color: Colors.deepPurple,
+                        borderRadius: BorderRadius.circular(30)),
+                    child: Center(
+                        child: Text(
+                      'Sign In',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    )),
+                  ),
                 ),
-              )
+              ),
+              const SizedBox(height: 20),
+
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SignupScreen(auth: widget.auth)),
+                  );
+                },
+                child: Text(
+                  'Don\'t have an account? Sign Up',
+                  style: TextStyle(
+                      color: Colors.deepPurple, fontWeight: FontWeight.bold),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              Text(
+                _error,
+                style: TextStyle(color: Colors.red),
+              ),
             ],
           ),
         ));

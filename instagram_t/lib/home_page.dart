@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_t/add_post.dart';
+import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/item_post.dart';
 import 'package:instagram_t/colors.dart';
+import 'package:instagram_t/screens/login_screen.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  final Auth auth;
+  HomePage({required this.auth, super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -78,7 +81,21 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(
                 Icons.favorite_border_outlined,
                 color: AppColors.outlinedIcons,
-              ))
+              )),
+          IconButton(
+              onPressed: () {
+                widget.auth.signOut();
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => LoginScreen(auth: widget.auth)),
+                );
+              },
+              icon: Icon(
+                Icons.logout,
+                color: AppColors.outlinedIcons,
+              )),
         ],
       ),
       body: FutureBuilder(

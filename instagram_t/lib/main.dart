@@ -4,24 +4,29 @@ import 'package:flutter/material.dart';
 import 'package:instagram_t/screens/login_screen.dart';
 import 'package:instagram_t/screens/signup_screen.dart';
 import 'package:instagram_t/home_page.dart';
-
+import 'package:instagram_t/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  Auth auth;
   Firebase.initializeApp().then((value) {
-    runApp(MyApp());
+    auth = Auth();
+    runApp(MyApp(auth: auth));
   });
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Auth auth;
+
+  MyApp({required this.auth, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(primarySwatch: Colors.lightGreen),
       debugShowCheckedModeBanner: false,
-      home: SignupScreen(),
+      home: SignupScreen(auth: auth),
     );
   }
 }
