@@ -47,191 +47,185 @@ class _SignupScreenState extends State<SignupScreen> {
               }
 
               return SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 200,
-                            ),
-                            Image.asset('assets/logo.png'),
-                            Padding(padding: EdgeInsets.only(left: 10)),
-                            const Text(
-                              'Instagram\'t!',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 40,
-                                  fontFamily: 'PlayFair'),
-                            ),
-                          ],
-                        ),
-                        const Text(
-                          'Let\'s get you started',
-                          style: TextStyle(
-                              fontSize: 25,
-                              fontFamily: 'Garamond',
-                              fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 50),
-                        // Email textfield
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 200,
+                          ),
+                          Image.asset('assets/logo.png'),
+                          Padding(padding: EdgeInsets.only(left: 10)),
+                          const Text(
+                            'Instagram\'t!',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 40,
+                                fontFamily: 'PlayFair'),
+                          ),
+                        ],
+                      ),
+                      const Text(
+                        'Let\'s get you started',
+                        style: TextStyle(
+                            fontSize: 25,
+                            fontFamily: 'Garamond',
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 50),
+                      // Email textfield
 
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 25),
-                              child: Text('Your email address',
-                                  style: TextStyle(
-                                      color: AppColors.onPrimaryContainer,
-                                      fontSize: 15,
-                                      fontFamily: 'Garamond',
-                                      fontWeight: FontWeight.normal)),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25),
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      color: AppColors.background,
-                                      border: Border.all(
-                                        color: AppColors.outline,
-                                      ),
-                                      borderRadius: BorderRadius.circular(30)),
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 20),
-                                    child: TextField(
-                                      controller: _emailController,
-                                      decoration: InputDecoration(
-                                        hintText: 'your_email@example.com',
-                                        border: InputBorder.none,
-                                      ),
-                                    ),
-                                  )),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 50),
-
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 25),
-                              child: Text(
-                                'Password',
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 25),
+                            child: Text('Your email address',
                                 style: TextStyle(
                                     color: AppColors.onPrimaryContainer,
                                     fontSize: 15,
                                     fontFamily: 'Garamond',
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25),
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      color: AppColors.background,
-                                      border: Border.all(
-                                        color: AppColors.outline,
-                                      ),
-                                      borderRadius: BorderRadius.circular(30)),
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 20),
-                                    child: TextField(
-                                      controller: _passwordController,
-                                      obscureText: true,
-                                      decoration: InputDecoration(
-                                        hintText: '*********',
-                                        border: InputBorder.none,
-                                      ),
-                                    ),
-                                  )),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 50),
-
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 25),
-                          child: GestureDetector(
-                            onTap: () async {
-                              print(_emailController.value);
-                              print(_passwordController.value);
-
-                              try {
-                                await widget.auth
-                                    .createUserWithEmailAndPassword(
-                                        email: _emailController.text,
-                                        password: _passwordController.text);
-
-                                // Add navigator push to home page
-
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => UserData(
-                                              auth: widget.auth,
-                                            )));
-                              } on FirebaseException catch (e) {
-                                print(e);
-                                _error = e.message!;
-                              }
-                            },
+                                    fontWeight: FontWeight.normal)),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25),
                             child: Container(
-                              padding: EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                  color: AppColors.primary,
-                                  borderRadius: BorderRadius.circular(30)),
-                              child: Center(
-                                  child: Text(
-                                'Sign Up',
-                                style: TextStyle(
-                                    color: AppColors.onPrimary,
-                                    fontSize: 20,
-                                    fontFamily: 'Garamond',
-                                    fontWeight: FontWeight.bold),
-                              )),
+                                decoration: BoxDecoration(
+                                    color: AppColors.background,
+                                    border: Border.all(
+                                      color: AppColors.outline,
+                                    ),
+                                    borderRadius: BorderRadius.circular(30)),
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 20),
+                                  child: TextField(
+                                    controller: _emailController,
+                                    decoration: InputDecoration(
+                                      hintText: 'your_email@example.com',
+                                      border: InputBorder.none,
+                                    ),
+                                  ),
+                                )),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 50),
+
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 25),
+                            child: Text(
+                              'Password',
+                              style: TextStyle(
+                                  color: AppColors.onPrimaryContainer,
+                                  fontSize: 15,
+                                  fontFamily: 'Garamond',
+                                  fontWeight: FontWeight.normal),
                             ),
                           ),
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    color: AppColors.background,
+                                    border: Border.all(
+                                      color: AppColors.outline,
+                                    ),
+                                    borderRadius: BorderRadius.circular(30)),
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 20),
+                                  child: TextField(
+                                    controller: _passwordController,
+                                    obscureText: true,
+                                    decoration: InputDecoration(
+                                      hintText: '*********',
+                                      border: InputBorder.none,
+                                    ),
+                                  ),
+                                )),
+                          ),
+                        ],
+                      ),
 
-                        SizedBox(
-                          height: 20,
-                        ),
+                      const SizedBox(height: 50),
 
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      LoginScreen(auth: widget.auth)),
-                            );
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 25),
+                        child: GestureDetector(
+                          onTap: () async {
+                            print(_emailController.value);
+                            print(_passwordController.value);
+
+                            try {
+                              await widget.auth.createUserWithEmailAndPassword(
+                                  email: _emailController.text,
+                                  password: _passwordController.text);
+
+                              // Add navigator push to home page
+
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => UserData(
+                                            auth: widget.auth,
+                                          )));
+                            } on FirebaseException catch (e) {
+                              print(e);
+                              _error = e.message!;
+                            }
                           },
-                          child: Text(
-                            'Already have an account? Sign In',
-                            style: TextStyle(
+                          child: Container(
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
                                 color: AppColors.primary,
-                                fontSize: 20,
-                                fontFamily: 'Garamond',
-                                fontWeight: FontWeight.bold),
+                                borderRadius: BorderRadius.circular(30)),
+                            child: Center(
+                                child: Text(
+                              'Sign Up',
+                              style: TextStyle(
+                                  color: AppColors.onPrimary,
+                                  fontSize: 20,
+                                  fontFamily: 'Garamond',
+                                  fontWeight: FontWeight.bold),
+                            )),
                           ),
                         ),
+                      ),
 
-                        Text(
-                          _error,
-                          style: TextStyle(color: Colors.red),
+                      SizedBox(
+                        height: 20,
+                      ),
+
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    LoginScreen(auth: widget.auth)),
+                          );
+                        },
+                        child: Text(
+                          'Already have an account? Sign In',
+                          style: TextStyle(
+                              color: AppColors.primary,
+                              fontSize: 20,
+                              fontFamily: 'Garamond',
+                              fontWeight: FontWeight.bold),
                         ),
-                      ],
-                    ),
+                      ),
+
+                      Text(
+                        _error,
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ],
                   ),
                 ),
               );
