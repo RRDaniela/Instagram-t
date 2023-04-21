@@ -1,7 +1,37 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color blackColor = Color(0xFFFF110A03);
+  static const Color primary = Color(0xFF006782);
+  static const Color onPrimary = Color(0xFFFFFFFF);
+  static const Color primaryContainer = Color(0xFFBBE9FF);
+  static const Color onPrimaryContainer = Color(0xFF001F29);
+  static const Color secondary = Color(0xFF006A60);
+  static const Color onSecondary = Color(0xFFFFFFFF);
+  static const Color secondaryContainer = Color(0xFF74F8E5);
+  static const Color onSecondaryContainer = Color(0xFF00201C);
+  static const Color tertiary = Color(0xFF765A00);
+  static const Color onTertiary = Color(0xFFFFFFFF);
+  static const Color tertiaryContainer = Color(0xFFFFDF96);
+  static const Color onTertiaryContainer = Color(0xFF251A00);
+  static const Color error = Color(0xFFBA1A1A);
+  static const Color errorContainer = Color(0xFFFFDAD6);
+  static const Color onError = Color(0xFFFFFFFF);
+  static const Color onErrorContainer = Color(0xFF410002);
+  static const Color background = Color(0xFFFFFBFF);
+  static const Color onBackground = Color(0xFF2D1600);
+  static const Color surface = Color(0xFFFFFBFF);
+  static const Color onSurface = Color(0xFF2D1600);
+  static const Color surfaceVariant = Color(0xFFDCE4E9);
+  static const Color onSurfaceVariant = Color(0xFF40484C);
+  static const Color outline = Color(0xFF70787D);
+  static const Color onInverseSurface = Color(0xFFFFEEE1);
+  static const Color inverseSurface = Color(0xFF4B2800);
+  static const Color inversePrimary = Color(0xFF61D4FF);
+  static const Color shadow = Color(0xFF000000);
+  static const Color surfaceTint = Color(0xFF006782);
+  static const Color outlineVariant = Color(0xFFC0C8CC);
+  static const Color scrim = Color(0xFF000000);
+  static const Color blackColor = Color(0xFFFFfffbff);
   static const Color backColor = Color(0xFFFF37174f);
   static const Color headerColor = Color(0xFFFFF1F1F1F);
   static const Color bottomColor = Color(0xFFFFF1F1F1F);
@@ -10,4 +40,14 @@ class AppColors {
   static const Color outlinedIcons = Color(0xFFFFF707070);
   static const Color textColorGrey = Color(0xFFFFFA3A3A3);
   static const Color navBarButton = Color(0xFFFFF1F1F1F);
+  /*static const Color blackColor = Color(0xFFFFfffbff);
+  static const Color backColor = Color(0xFFFF37174f);
+  static const Color headerColor = Color(0xFFFFF1F1F1F);
+  static const Color bottomColor = Color(0xFFFFF1F1F1F);
+  static const Color imageColor = Color(0xFFFFFEFFFE);
+  static const Color navBar = Color(0xFFFFF333333);
+  static const Color outlinedIcons = Color(0xFFFFF707070);
+  static const Color textColorGrey = Color(0xFFFFFA3A3A3);
+  static const Color navBarButton = Color(0xFFFFF1F1F1F);
+  */
 }
