@@ -5,7 +5,9 @@ import 'package:instagram_t/add_post.dart';
 import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/item_post.dart';
 import 'package:instagram_t/colors.dart';
+import 'package:instagram_t/providers/userData_provider.dart';
 import 'package:instagram_t/screens/login_screen.dart';
+import 'package:provider/provider.dart';
 
 class UserData extends StatefulWidget {
   final Auth auth;
@@ -25,7 +27,8 @@ class _UserDataState extends State<UserData> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+        body: Consumer<UserDataProvider>(builder: (context, provider, child) {
+      return Container(
         color: AppColors.background,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -63,6 +66,9 @@ class _UserDataState extends State<UserData> {
                             child: Padding(
                               padding: EdgeInsets.only(left: 20),
                               child: TextField(
+                                controller: context
+                                    .read<UserDataProvider>()
+                                    .usernameController,
                                 decoration: InputDecoration(
                                   hintText: 'Username',
                                   border: InputBorder.none,
@@ -83,7 +89,9 @@ class _UserDataState extends State<UserData> {
                     width: 300,
                     height: 50,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        await context.read<UserDataProvider>().crearUsuario();
+                      },
                       child: Text(
                         'Next',
                         style: TextStyle(
@@ -99,7 +107,7 @@ class _UserDataState extends State<UserData> {
             )
           ],
         ),
-      ),
-    );
+      );
+    }));
   }
 }

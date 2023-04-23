@@ -1,10 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram_t/providers/userData_provider.dart';
 
 import 'package:instagram_t/screens/login_screen.dart';
 import 'package:instagram_t/screens/signup_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:instagram_t/home_page.dart';
 import 'package:instagram_t/auth.dart';
+import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
@@ -12,7 +15,11 @@ void main() {
   Auth auth;
   Firebase.initializeApp().then((value) {
     auth = Auth();
-    runApp(MyApp(auth: auth));
+    runApp(MultiBlocProvider(providers: [
+      ChangeNotifierProvider(
+        create: (context) => UserDataProvider(),
+      )
+    ], child: MyApp(auth: auth)));
   });
 }
 
