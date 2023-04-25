@@ -12,17 +12,18 @@ class UserDataProvider with ChangeNotifier {
   UserDataProvider._internal();
   TextEditingController usernameController = TextEditingController();
 
-  Future crearUsuario() async {
+  Future<String> crearUsuario() async {
     try {
       String username = usernameController.text;
       bool exists = await checkUsernameExists(username);
       if (exists) {
-        print('Username exists');
+        return 'Username already exists.';
       } else {
-        print('Username doesnt exist');
+        return "";
       }
     } catch (e) {
       print(e);
+      return "";
     }
   }
 

@@ -6,6 +6,7 @@ import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/item_post.dart';
 import 'package:instagram_t/colors.dart';
 import 'package:instagram_t/providers/userData_provider.dart';
+import 'package:instagram_t/screens/addPicture.dart';
 import 'package:instagram_t/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +20,7 @@ class UserData extends StatefulWidget {
 
 class _UserDataState extends State<UserData> {
   User? currentUser;
+  String _error = "";
   @override
   void initState() {
     super.initState();
@@ -90,7 +92,23 @@ class _UserDataState extends State<UserData> {
                     height: 50,
                     child: TextButton(
                       onPressed: () async {
-                        await context.read<UserDataProvider>().crearUsuario();
+                        String error = await context
+                            .read<UserDataProvider>()
+                            .crearUsuario();
+                        if (error.isEmpty) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddPicture(
+                                      auth: widget.auth,
+                                      username: context
+                                          .read<UserDataProvider>()
+                                          .usernameController
+                                          .text)));
+                        }
+                        setState(() {
+                          _error = error;
+                        });
                       },
                       child: Text(
                         'Next',
@@ -104,6 +122,34 @@ class _UserDataState extends State<UserData> {
                           backgroundColor: AppColors.primary),
                     ))
               ],
+            ),
+            Visibility(
+              visible: _error.isNotEmpty,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Container(
+                      width: 300,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: AppColors.errorContainer,
+                          border:
+                              Border.all(color: AppColors.error, width: 2.0)),
+                      child: Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Center(
+                          child: Text(
+                            _error,
+                            style: TextStyle(color: AppColors.error),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             )
           ],
         ),
