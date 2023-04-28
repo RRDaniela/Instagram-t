@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/colors.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:instagram_t/home_page.dart';
 import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -20,6 +21,7 @@ class AddPicture extends StatefulWidget {
 class _AddPictureState extends State<AddPicture> {
   User? currentUser;
   File? pickedImage;
+
   @override
   void initState() {
     super.initState();
@@ -133,18 +135,24 @@ class _AddPictureState extends State<AddPicture> {
                               .then((TaskSnapshot snapshot) async {
                             return await snapshot.ref.getDownloadURL();
                           });
-                          print(
-                              'Image uploaded successfully. Download URL: $downloadURL');
+
+                          FirebaseFirestore.instance.collection('users').add({
+                            'username': widget.username,
+                            'description': '',
+                            'image': downloadURL,
+                            'id': widget.auth.currentUser!.uid
+                          }).then((_) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        HomePage(auth: widget.auth)));
+                          }).catchError((error) {
+                            print('Encountered an error: $error');
+                          });
                         } catch (e) {
                           print(e);
                         }
-                        /*try {
-                          UploadTask _uploadTask = FirebaseStorage.instance
-                              .ref('ProfilePictures/${widget.username}')
-                              .putFile(file);
-                        } catch (e) {
-                          print(e);
-                        }*/
                       } else {
                         print('Permission denied');
                       }
