@@ -243,7 +243,7 @@ class _ProfileState extends State<Profile> {
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(5)),
                                         border: Border.all(
-                                            color: AppColors.outlineVariant,
+                                            color: AppColors.background,
                                             width: 2.0),
                                       ),
                                       child: ClipRRect(

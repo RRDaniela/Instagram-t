@@ -179,7 +179,8 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AddPost()),
+                    MaterialPageRoute(
+                        builder: (context) => AddPost(auth: widget.auth)),
                   );
                   //TODO: SEND TO ADD SCREEN
                   /*Navigator.push(

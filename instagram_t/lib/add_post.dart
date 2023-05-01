@@ -1,11 +1,20 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:instagram_t/add_caption.dart';
+import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/colors.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AddPost extends StatefulWidget {
+  final Auth auth;
+
+  AddPost({
+    super.key,
+    required this.auth,
+  });
+
   @override
   State<AddPost> createState() => _AddPostState();
 }
@@ -92,6 +101,30 @@ class _AddPostState extends State<AddPost> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         title: Text('New post'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.arrow_forward),
+            onPressed: () {
+              if (_selectedImageNotifier.value != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddCaption(
+                      auth: widget.auth,
+                      imageFile: _selectedImageNotifier.value!,
+                    ),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Please select an image to continue.'),
+                  ),
+                );
+              }
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [

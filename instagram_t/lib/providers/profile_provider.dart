@@ -111,6 +111,7 @@ class ProfileProvider with ChangeNotifier {
         .instance
         .collection('posts')
         .where('id', isEqualTo: id)
+        .orderBy('timestamp', descending: true)
         .get();
 
     return postDocs.docs.map((doc) {
