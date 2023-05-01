@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:instagram_t/home_page.dart';
 import 'package:instagram_t/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_t/auth.dart';
@@ -35,13 +35,22 @@ class _SignupScreenState extends State<SignupScreen> {
             stream: widget.auth.authStateChanges(),
             builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
               if (snapshot.hasData && snapshot.data != null) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HomePage(
+                              auth: widget.auth,
+                            )),
+                  );
+                });
+              } else {
                 WidgetsBinding.instance!.addPostFrameCallback((_) {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => UserData(
-                              auth: widget.auth,
-                            )),
+                      builder: (context) => LoginScreen(auth: widget.auth),
+                    ),
                   );
                 });
               }

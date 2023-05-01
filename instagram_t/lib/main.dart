@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram_t/providers/profile_provider.dart';
 import 'package:instagram_t/providers/userData_provider.dart';
 
 import 'package:instagram_t/screens/login_screen.dart';
@@ -15,10 +16,11 @@ void main() {
   Auth auth;
   Firebase.initializeApp().then((value) {
     auth = Auth();
-    runApp(MultiBlocProvider(providers: [
+    runApp(MultiProvider(providers: [
       ChangeNotifierProvider(
         create: (context) => UserDataProvider(),
-      )
+      ),
+      ChangeNotifierProvider(create: (context) => ProfileProvider()),
     ], child: MyApp(auth: auth)));
   });
 }
