@@ -48,15 +48,9 @@ class _SignupScreenState extends State<SignupScreen> {
                   );
                 });
               } else {
-                widget.auth.signOut();
-                WidgetsBinding.instance!.addPostFrameCallback((_) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginScreen(auth: widget.auth),
-                    ),
-                  );
-                });
+                // TODO: When a user logs out, the app should go to the login screen but it also
+                // should allow the user to go to the signup screen. Currently, the app goes to the
+                // login screen but does not allow the user to go to the signup screen.
               }
 
               return SingleChildScrollView(
