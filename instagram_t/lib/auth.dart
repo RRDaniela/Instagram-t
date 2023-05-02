@@ -12,6 +12,7 @@ class Auth {
     await _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
+  // TO DO: Throw exception if user already exists with this email
   Future<void> createUserWithEmailAndPassword(
       {required String email, required String password}) async {
     await _auth.createUserWithEmailAndPassword(
