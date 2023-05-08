@@ -1,17 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_t/add_post.dart';
 import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/item_post.dart';
 import 'package:instagram_t/colors.dart';
+import 'package:instagram_t/models/posts.dart';
 import 'package:instagram_t/profile.dart';
 import 'package:instagram_t/screens/login_screen.dart';
 
 class HomePage extends StatefulWidget {
-  final Auth auth;
+  final User current_user;
 
-  HomePage({required this.auth, super.key});
+  HomePage({required this.current_user, super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -21,43 +23,31 @@ class _HomePageState extends State<HomePage> {
   final _scrollController = ScrollController();
 
   Future<List<Map<String, String>>> getUsers() async {
-    CollectionReference collectionReference =
-        FirebaseFirestore.instance.collection("posts");
-    QuerySnapshot posts = await collectionReference.get();
+    QuerySnapshot posts = await FirebaseFirestore.instance
+        .collection('posts')
+        .orderBy('timestamp', descending: true)
+        .get();
 
     QuerySnapshot qs = await FirebaseFirestore.instance
         .collection('users')
-        .where('id', isEqualTo: widget.auth.currentUser!.uid)
+        .where('id', isEqualTo: widget.current_user.uid)
         .get();
     final QueryDocumentSnapshot<Map<String, dynamic>> userDoc =
         qs.docs.first as QueryDocumentSnapshot<Map<String, dynamic>>;
-    final List<String> friends = List<String>.from(userDoc.data()['friends']);
+    print(userDoc.data()['friends']);
+    //final List<String> friends = List<String>.from(userDoc.data()['friends']);
     List<Map<String, String>> listElements = [];
 
     if (posts.docs.length != 0) {
       for (var doc in posts.docs) {
-        String username = doc.get('username');
-        String postImageUrl = doc.get('imageUrl');
-        String postLikes = doc.get('likes').toString();
-        String postCaption = doc.get('caption');
-        if (friends.contains(username)) {
-          DocumentSnapshot userDocSnapshot = await FirebaseFirestore.instance
-              .collection('users')
-              .where('username', isEqualTo: username)
-              .get()
-              .then((value) => value.docs.first);
-          String profileImageUrl = ''; // check if the 'image' field is present
-          if (userDocSnapshot.exists) {
-            profileImageUrl = userDocSnapshot.get('image');
-          }
-          listElements.add({
-            'username': username,
-            'likes': postLikes,
-            'imageUrl': postImageUrl,
-            'caption': postCaption,
-            'userImageUrl': profileImageUrl,
-          });
-        }
+        Post post = Post.fromSnap(doc);
+
+        listElements.add({
+          'username': post.username,
+          'likes': post.likes.toString(),
+          'imageUrl': post.imageUrl,
+          'caption': post.caption,
+        });
       }
     }
 
@@ -94,12 +84,11 @@ class _HomePageState extends State<HomePage> {
               )),
           IconButton(
               onPressed: () {
-                widget.auth.signOut();
+                Auth.signOut();
 
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => LoginScreen(auth: widget.auth)),
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
                 );
               },
               icon: Icon(
@@ -124,34 +113,17 @@ class _HomePageState extends State<HomePage> {
                   child: RefreshIndicator(
                     onRefresh: _refreshPage,
                     child: ListView.builder(
+                      cacheExtent: 9999,
                       controller: _scrollController,
                       padding: EdgeInsets.zero,
                       scrollDirection: Axis.vertical,
                       itemCount: listElements.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return Padding(
-                          padding: EdgeInsets.all(15.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: Offset(
-                                      0, 3), // changes position of shadow
-                                ),
-                              ],
-                            ),
-                            child: InstagramtPost(
-                                username: listElements[index]["username"]!,
-                                likes: listElements[index]["likes"]!,
-                                imageUrl: listElements[index]["imageUrl"]!,
-                                caption: listElements[index]["caption"]!,
-                                profileImageUrl: listElements[index]
-                                    ["userImageUrl"]!),
-                          ),
+                        return InstagramtPost(
+                          username: listElements[index]["username"]!,
+                          likes: listElements[index]["likes"]!,
+                          imageUrl: listElements[index]["imageUrl"]!,
+                          caption: listElements[index]["caption"]!,
                         );
                       },
                     ),
@@ -180,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AddPost(auth: widget.auth)),
+                        builder: (context) => AddPost(current_user: widget.current_user)),
                   );
                   //TODO: SEND TO ADD SCREEN
                   /*Navigator.push(
@@ -195,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => Profile(auth: widget.auth)));
+                          builder: (context) => Profile(current_user: widget.current_user)));
                 },
                 icon: Icon(Icons.person_2_rounded),
                 color: AppColors.onSurface,

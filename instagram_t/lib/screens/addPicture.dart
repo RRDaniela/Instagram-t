@@ -10,9 +10,9 @@ import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
 
 class AddPicture extends StatefulWidget {
-  final Auth auth;
+  final User current_user;
   final String username;
-  AddPicture({super.key, required this.auth, required this.username});
+  AddPicture({super.key, required this.current_user, required this.username});
 
   @override
   State<AddPicture> createState() => _AddPictureState();
@@ -25,7 +25,7 @@ class _AddPictureState extends State<AddPicture> {
   @override
   void initState() {
     super.initState();
-    currentUser = widget.auth.currentUser;
+    currentUser = widget.current_user;
   }
 
   @override
@@ -112,8 +112,8 @@ class _AddPictureState extends State<AddPicture> {
                           await Permission.camera.request();
                       if (status == PermissionStatus.granted) {
                         final imagePicker = ImagePicker();
-                        PickedFile? pickedFile = await imagePicker.getImage(
-                            source: ImageSource.gallery);
+                        XFile? pickedFile = await imagePicker.pickImage(
+                            source: ImageSource.gallery, imageQuality: 20);
                         setState(() {
                           pickedImage = File(pickedFile!.path);
                         });
@@ -136,17 +136,20 @@ class _AddPictureState extends State<AddPicture> {
                             return await snapshot.ref.getDownloadURL();
                           });
 
+                          widget.current_user.updatePhotoURL(downloadURL);
+
                           FirebaseFirestore.instance.collection('users').add({
                             'username': widget.username,
                             'description': '',
                             'image': downloadURL,
-                            'id': widget.auth.currentUser!.uid
+                            'id': widget.current_user.uid
                           }).then((_) {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        HomePage(auth: widget.auth)));
+                                    builder: (context) => HomePage(
+                                          current_user: widget.current_user,
+                                        )));
                           }).catchError((error) {
                             print('Encountered an error: $error');
                           });
