@@ -28,27 +28,18 @@ class _HomePageState extends State<HomePage> {
         .orderBy('timestamp', descending: true)
         .get();
 
-    QuerySnapshot qs = await FirebaseFirestore.instance
-        .collection('users')
-        .where('id', isEqualTo: widget.current_user.uid)
-        .get();
-    final QueryDocumentSnapshot<Map<String, dynamic>> userDoc =
-        qs.docs.first as QueryDocumentSnapshot<Map<String, dynamic>>;
-    print(userDoc.data()['friends']);
     //final List<String> friends = List<String>.from(userDoc.data()['friends']);
     List<Map<String, String>> listElements = [];
 
-    if (posts.docs.length != 0) {
-      for (var doc in posts.docs) {
-        Post post = Post.fromSnap(doc);
+    for (var doc in posts.docs) {
+      Post post = Post.fromSnap(doc);
 
-        listElements.add({
-          'username': post.username,
-          'likes': post.likes.toString(),
-          'imageUrl': post.imageUrl,
-          'caption': post.caption,
-        });
-      }
+      listElements.add({
+        'username': post.username,
+        'imageUrl': post.imageUrl,
+        'caption': post.caption,
+        'postId': post.id,
+      });
     }
 
     return listElements;
@@ -121,9 +112,10 @@ class _HomePageState extends State<HomePage> {
                       itemBuilder: (BuildContext context, int index) {
                         return InstagramtPost(
                           username: listElements[index]["username"]!,
-                          likes: listElements[index]["likes"]!,
                           imageUrl: listElements[index]["imageUrl"]!,
                           caption: listElements[index]["caption"]!,
+                          postId: listElements[index]["postId"]!,
+
                         );
                       },
                     ),
@@ -152,7 +144,8 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AddPost(current_user: widget.current_user)),
+                        builder: (context) =>
+                            AddPost(current_user: widget.current_user)),
                   );
                   //TODO: SEND TO ADD SCREEN
                   /*Navigator.push(
@@ -167,7 +160,8 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => Profile(current_user: widget.current_user)));
+                          builder: (context) =>
+                              Profile(current_user: widget.current_user)));
                 },
                 icon: Icon(Icons.person_2_rounded),
                 color: AppColors.onSurface,

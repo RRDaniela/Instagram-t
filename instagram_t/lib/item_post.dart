@@ -1,18 +1,23 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:instagram_t/auth.dart';
+import 'package:instagram_t/resources/firestore_methods.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_t/colors.dart';
 
 class InstagramtPost extends StatefulWidget {
+  final String postId;
   final String imageUrl;
   final String username;
   final String caption;
-  final String likes;
-  const InstagramtPost(
-      {super.key,
-      required this.imageUrl,
-      required this.username,
-      required this.caption,
-      required this.likes});
+  const InstagramtPost({
+    super.key,
+    required this.imageUrl,
+    required this.username,
+    required this.caption,
+    required this.postId,
+  });
 
   // Find profile image from username using firebase
 
@@ -22,11 +27,20 @@ class InstagramtPost extends StatefulWidget {
 
 class _InstagramtPostState extends State<InstagramtPost> {
   String? _profileImageUrl;
+  bool _isLiked = false;
+
+  Future<void> _checkLikeStatus() async {
+    bool liked = await FirestoreMethods().isPostLiked(widget.postId, Auth.getCurrentUser().uid);
+    setState(() {
+      _isLiked = liked;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _fetchProfileImageUrl();
+    _checkLikeStatus();
   }
 
   Future<String> getProfileImageUrl(String username) async {
@@ -76,8 +90,10 @@ class _InstagramtPostState extends State<InstagramtPost> {
                       children: [
                         CircleAvatar(
                           radius: 20.0,
-                          backgroundImage: NetworkImage(_profileImageUrl ??
-                              'https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg'),
+                          backgroundImage: CachedNetworkImageProvider(
+                            _profileImageUrl ??
+                                'https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg',
+                          ),
                         ),
                         SizedBox(width: 8.0),
                         Text(
@@ -97,15 +113,26 @@ class _InstagramtPostState extends State<InstagramtPost> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(0.0),
                         child: Container(
-                          width: 350,
-                          height: 350,
-                          child: Image.network(
-                            widget.imageUrl,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                            width: 360,
+                            height: 360,
+                            child: CachedNetworkImage(
+                              imageUrl: widget.imageUrl,
+                              fit: BoxFit.cover,
+                              progressIndicatorBuilder: (context, url, downloadProgress) => Shimmer(
+                                duration: Duration(seconds: 3), //Default value
+                                interval: Duration(seconds: 5),
+                                direction: ShimmerDirection.fromLeftToRight(), //Default value: Duration(seconds: 0)
+                                child: Container(
+                                  width: 300,
+                                  height: 300,
+                                  color: Colors.grey[200],
+                                ),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            )),
                       ),
                     ],
                   ),
@@ -121,11 +148,17 @@ class _InstagramtPostState extends State<InstagramtPost> {
                       Row(
                         children: [
                           IconButton(
-                              onPressed: () {},
+                              onPressed: () async {
+                                bool updatedLikeStatus = await FirestoreMethods().likePost(widget.postId, Auth.getCurrentUser().uid);
+
+                                setState(() {
+                                  _isLiked = updatedLikeStatus;
+                                });
+                              },
                               icon: Icon(
-                                Icons.favorite_border_outlined,
+                                _isLiked ? Icons.favorite : Icons.favorite_border_outlined,
                                 size: 20,
-                                color: AppColors.onSurfaceVariant,
+                                color: _isLiked ? Colors.red : AppColors.onSurfaceVariant,
                               )),
                           IconButton(
                               onPressed: () {},
