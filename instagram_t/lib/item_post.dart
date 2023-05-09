@@ -12,8 +12,7 @@ class InstagramtPost extends StatefulWidget {
       required this.imageUrl,
       required this.username,
       required this.caption,
-      required this.likes
-      });
+      required this.likes});
 
   // Find profile image from username using firebase
 
@@ -43,7 +42,7 @@ class _InstagramtPostState extends State<InstagramtPost> {
       return imageUrl;
     }
 
-    return ''; // Return an empty string or default image URL if not found
+    return 'https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg'; // Return an empty string or default image URL if not found
   }
 
   Future<void> _fetchProfileImageUrl() async {
@@ -88,7 +87,8 @@ class _InstagramtPostState extends State<InstagramtPost> {
                       children: [
                         CircleAvatar(
                           radius: 20.0,
-                          backgroundImage: NetworkImage(_profileImageUrl ?? ''),
+                          backgroundImage: NetworkImage(_profileImageUrl ??
+                              'https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg'),
                         ),
                         SizedBox(width: 8.0),
                         Text(
