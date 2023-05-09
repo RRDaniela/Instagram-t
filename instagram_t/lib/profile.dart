@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/colors.dart';
@@ -5,11 +6,11 @@ import 'package:instagram_t/providers/profile_provider.dart';
 import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
-  final Auth auth;
+  final User current_user;
 
   Profile({
     super.key,
-    required this.auth,
+    required this.current_user,
   });
 
   @override
@@ -29,9 +30,9 @@ class _ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     _userDataFuture = Provider.of<ProfileProvider>(context, listen: false)
-        .getUserData(widget.auth.currentUser!.uid);
+        .getUserData(widget.current_user.uid);
     _postsFuture = Provider.of<ProfileProvider>(context, listen: false)
-        .getPostsForUsername(widget.auth.currentUser!.uid);
+        .getPostsForUsername(widget.current_user.uid);
   }
 
   @override

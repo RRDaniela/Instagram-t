@@ -7,8 +7,7 @@ import 'package:instagram_t/screens/signup_screen.dart';
 import '../colors.dart';
 
 class LoginScreen extends StatefulWidget {
-  final Auth auth;
-  const LoginScreen({required this.auth, super.key});
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -49,8 +48,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       'Instagram\'t!',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 40,
-                          fontFamily: 'PlayFair'),
+                          fontSize: 30,
+                          fontFamily: 'Poppins'),
                     ),
                   ],
                 ),
@@ -58,9 +57,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 const Text(
                   'Log into your account',
                   style: TextStyle(
-                      fontSize: 25,
-                      fontFamily: 'Garamond',
-                      fontWeight: FontWeight.bold),
+                      fontSize: 18,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 50),
 
@@ -75,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: TextStyle(
                               color: AppColors.onPrimaryContainer,
                               fontSize: 15,
-                              fontFamily: 'Garamond',
+                              fontFamily: 'Poppins',
                               fontWeight: FontWeight.normal)),
                     ),
                     Padding(
@@ -112,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                             color: AppColors.onPrimaryContainer,
                             fontSize: 15,
-                            fontFamily: 'Garamond',
+                            fontFamily: 'Poppins',
                             fontWeight: FontWeight.normal),
                       ),
                     ),
@@ -148,18 +147,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       print(_passwordController.value);
 
                       try {
-                        await widget.auth.signInWithEmailAndPassword(
+                        var current_user = await Auth.signInUsingEmailPassword(
                             email: _emailController.text,
-                            password: _passwordController.text);
+                            password: _passwordController.text,
+                            context: context);
 
                         // Add navigator push to home page
 
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomePage(
-                                      auth: widget.auth,
-                                    )));
+                        if (current_user != null) {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomePage(
+                                        current_user: current_user,
+                                      )));
+                        }
                       } on FirebaseException catch (e) {
                         setState(() {
                           _error = e.message!;
@@ -168,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
                     },
                     child: Container(
-                      padding: EdgeInsets.all(20),
+                      padding: EdgeInsets.all(14),
                       decoration: BoxDecoration(
                           color: AppColors.primary,
                           borderRadius: BorderRadius.circular(30)),
@@ -177,9 +179,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         'Sign In',
                         style: TextStyle(
                             color: AppColors.onPrimary,
-                            fontSize: 20,
-                            fontFamily: 'Garamond',
-                            fontWeight: FontWeight.bold),
+                            fontSize: 16,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500),
                       )),
                     ),
                   ),
@@ -190,18 +192,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              SignupScreen(auth: widget.auth)),
+                      MaterialPageRoute(builder: (context) => SignupScreen()),
                     );
                   },
                   child: Text(
-                    'Don\'t have an account? Sign Up',
+                    'Sign up instead',
                     style: TextStyle(
+                        decoration: TextDecoration.underline,
                         color: AppColors.primary,
-                        fontSize: 20,
-                        fontFamily: 'Garamond',
-                        fontWeight: FontWeight.bold),
+                        fontSize: 15,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w600),
                   ),
                 ),
 

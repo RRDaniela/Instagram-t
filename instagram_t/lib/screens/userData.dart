@@ -1,35 +1,31 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:instagram_t/add_post.dart';
 import 'package:instagram_t/auth.dart';
-import 'package:instagram_t/item_post.dart';
 import 'package:instagram_t/colors.dart';
 import 'package:instagram_t/providers/userData_provider.dart';
 import 'package:instagram_t/screens/addPicture.dart';
-import 'package:instagram_t/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
 class UserData extends StatefulWidget {
-  final Auth auth;
-  UserData({super.key, required this.auth});
+  final User current_user;
+  UserData({super.key, required this.current_user});
 
   @override
   State<UserData> createState() => _UserDataState();
 }
 
 class _UserDataState extends State<UserData> {
-  User? currentUser;
   String _error = "";
   @override
   void initState() {
     super.initState();
-    currentUser = widget.auth.currentUser;
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
         body: Consumer<UserDataProvider>(builder: (context, provider, child) {
+      
+      print(widget.current_user);
       return Container(
         color: AppColors.background,
         child: Column(
@@ -100,7 +96,7 @@ class _UserDataState extends State<UserData> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => AddPicture(
-                                      auth: widget.auth,
+                                      current_user: widget.current_user,
                                       username: context
                                           .read<UserDataProvider>()
                                           .usernameController

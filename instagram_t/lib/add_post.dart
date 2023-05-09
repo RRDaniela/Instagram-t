@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram_t/add_caption.dart';
@@ -8,11 +9,11 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AddPost extends StatefulWidget {
-  final Auth auth;
+  final User current_user;
 
   AddPost({
     super.key,
-    required this.auth,
+    required this.current_user,
   });
 
   @override
@@ -110,7 +111,7 @@ class _AddPostState extends State<AddPost> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => AddCaption(
-                      auth: widget.auth,
+                      current_user: widget.current_user,
                       imageFile: _selectedImageNotifier.value!,
                     ),
                   ),

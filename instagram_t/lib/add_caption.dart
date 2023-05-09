@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_t/colors.dart';
 import 'package:instagram_t/home_page.dart';
@@ -8,9 +9,9 @@ import 'package:instagram_t/providers/addPostProvider.dart';
 import 'auth.dart';
 
 class AddCaption extends StatefulWidget {
-  final Auth auth;
+  final User current_user;
   final File imageFile;
-  const AddCaption({super.key, required this.auth, required this.imageFile});
+  const AddCaption({super.key, required this.current_user, required this.imageFile});
 
   @override
   State<AddCaption> createState() => _AddCaptionState();
@@ -20,8 +21,8 @@ class _AddCaptionState extends State<AddCaption> {
   bool _loading = false;
 
   Future<void> _post() async {
-    final user = widget.auth.currentUser;
-    final userId = user!.uid;
+    final user = widget.current_user;
+    final userId = user.uid;
     final postProvider = PostProvider();
 
     setState(() {
@@ -35,7 +36,7 @@ class _AddCaptionState extends State<AddCaption> {
     });
 
     Navigator.push(context,
-        MaterialPageRoute(builder: (context) => HomePage(auth: widget.auth)));
+        MaterialPageRoute(builder: (context) => HomePage(current_user: widget.current_user)));
   }
 
   String _caption = '';
