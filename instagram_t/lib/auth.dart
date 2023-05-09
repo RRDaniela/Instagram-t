@@ -1,10 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class Auth {
-
-
-
   static Future<User?> registerUsingEmailPassword({
     required String email,
     required String password,
@@ -74,7 +72,32 @@ class Auth {
     await auth.signOut();
   }
 
+  // Create method to check if user is logged in
+  static Future<bool> isLoggedIn() async {
+    FirebaseApp firebaseApp = await Firebase.initializeApp();
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    User? user = auth.currentUser;
+
+    await user?.reload();
+    user = auth.currentUser;
+
+    if (user == null) {
+      return false;
+    }
+
+    return true;
+  }
+
+  // Create method to get the current user
+  static User getCurrentUser() {
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    User? user = auth.currentUser;
+
+    return user!;
+  }
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? get currentUser => _auth.currentUser;
-
 }

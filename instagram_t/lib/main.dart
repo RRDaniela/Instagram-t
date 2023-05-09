@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:instagram_t/auth.dart';
+import 'package:instagram_t/home_page.dart';
 import 'package:instagram_t/providers/profile_provider.dart';
 import 'package:instagram_t/providers/userData_provider.dart';
 import 'package:instagram_t/screens/signup_screen.dart';
@@ -20,9 +22,23 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.lightGreen),
-      debugShowCheckedModeBanner: false,
-      home: SignupScreen(),
-    );
+        theme: ThemeData(primarySwatch: Colors.lightGreen),
+        debugShowCheckedModeBanner: false,
+        home: FutureBuilder(
+          future: Auth.isLoggedIn(),
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.data == true) {
+                return HomePage(
+                  current_user: Auth.getCurrentUser(),
+                );
+              } else {
+                return SignupScreen();
+              }
+            } else {
+              return Container(color: Colors.white);
+            }
+          },
+        ));
   }
 }
