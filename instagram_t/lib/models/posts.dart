@@ -6,7 +6,7 @@ class Post {
   final String id;
   final timestamp;
   final String imageUrl;
-  final likes;
+  final List<dynamic> likes;
 
   Post({
     required this.caption,
@@ -19,6 +19,8 @@ class Post {
 
   static Post fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
+
+    print(snapshot);
 
     return Post(
       caption: snapshot["caption"],

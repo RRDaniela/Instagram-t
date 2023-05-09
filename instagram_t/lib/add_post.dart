@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:instagram_t/add_caption.dart';
 import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/colors.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -61,21 +62,35 @@ class _AddPostState extends State<AddPost> {
   }
 
   Future<List<File>?> _loadRecentImages() async {
-    final albums2 =
-        await PhotoManager.getAssetPathList(type: RequestType.image);
-    final recentAlbum = albums2.first;
-    final recentAssets = await recentAlbum.getAssetListRange(start: 0, end: 6);
+    try {
+      final albums =
+          await PhotoManager.getAssetPathList(type: RequestType.image);
+      if (albums.isEmpty) {
+        return null;
+      }
 
-    final tempDir = await getTemporaryDirectory();
-    final tempFiles = await Future.wait(recentAssets.map((asset) async {
-      final file = await asset.file;
-      final tempPath =
-          '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final tempFile = await file?.copy(tempPath);
-      return tempFile!;
-    }));
+      final recentAlbum = albums.first;
+      final recentAssets =
+          await recentAlbum.getAssetListRange(start: 0, end: 5);
 
-    return tempFiles;
+      final tempDir = await getTemporaryDirectory();
+      final tempFiles = await Future.wait(recentAssets.map((asset) async {
+        final file = await asset.file;
+        if (file == null) {
+          return null;
+        }
+
+        final tempPath =
+            '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final tempFile = await file.copy(tempPath);
+        return tempFile;
+      }));
+
+      return tempFiles.whereType<File>().toList();
+    } catch (e) {
+      print('Error loading recent images: $e');
+      return null;
+    }
   }
 
   Future<void> _takePhoto() async {
