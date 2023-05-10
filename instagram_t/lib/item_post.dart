@@ -121,13 +121,12 @@ class _InstagramtPostState extends State<InstagramtPost> {
                               imageUrl: widget.imageUrl,
                               fit: BoxFit.cover,
                               progressIndicatorBuilder: (context, url, downloadProgress) => Shimmer(
-                                duration: Duration(seconds: 3), //Default value
-                                interval: Duration(seconds: 5),
+
                                 direction: ShimmerDirection.fromLeftToRight(), //Default value: Duration(seconds: 0)
                                 child: Container(
                                   width: 300,
                                   height: 300,
-                                  color: Colors.grey[200],
+                                  color: Colors.grey[300],
                                 ),
                               ),
                               errorWidget: (context, url, error) =>

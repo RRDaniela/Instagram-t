@@ -25,7 +25,7 @@ class Post {
     return Post(
       caption: snapshot["caption"],
       username: snapshot["username"],
-      id: snapshot["id"],
+      id: snap.id,
       timestamp: snapshot["timestamp"],
       imageUrl: snapshot["imageUrl"],
       likes: snapshot["likes"],

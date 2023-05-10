@@ -29,7 +29,6 @@ class PostProvider {
     // Add post to Firestore
     await _db.collection('posts').add({
       'caption': caption,
-      'id': userId,
       'imageUrl': imageUrl,
       'likes': [],
       'username': await getUserName(userId),
