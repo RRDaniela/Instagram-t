@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/colors.dart';
 import 'package:instagram_t/providers/profile_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 class Profile extends StatefulWidget {
   final User current_user;
@@ -250,8 +252,22 @@ class _ProfileState extends State<Profile> {
                                       child: ClipRRect(
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(5)),
-                                          child: Image.network(post['imageUrl'],
-                                              fit: BoxFit.cover)),
+                                          child: CachedNetworkImage(
+                                              imageUrl: post['imageUrl'],
+                                              fit: BoxFit.cover,
+                                              progressIndicatorBuilder:
+                                                  (context, url,
+                                                          downloadProgress) =>
+                                                      Shimmer(
+                                                        direction: ShimmerDirection
+                                                            .fromLeftToRight(), //Default value: Duration(seconds: 0)
+                                                        child: Container(
+                                                          width: 360,
+                                                          height: 350,
+                                                          color:
+                                                              Colors.grey[300],
+                                                        ),
+                                                      ))),
                                     ),
                                   );
                                 },

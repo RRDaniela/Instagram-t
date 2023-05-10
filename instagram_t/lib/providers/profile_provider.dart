@@ -107,16 +107,32 @@ class ProfileProvider with ChangeNotifier {
   }
 
   Future<List<Map<String, dynamic>>> getPostsForUsername(String id) async {
-    final QuerySnapshot<Map<String, dynamic>> postDocs = await FirebaseFirestore
+
+    List<Map<String, dynamic>> posts = [];
+
+    final QuerySnapshot<Map<String, dynamic>> user = await FirebaseFirestore
         .instance
-        .collection('posts')
+        .collection('users')
         .where('id', isEqualTo: id)
-        .orderBy('timestamp', descending: true)
         .get();
 
-    return postDocs.docs.map((doc) {
-      final data = doc.data();
-      return data;
-    }).toList();
+    if (user.docs.isNotEmpty) {
+
+      String username = user.docs.first.data()['username'];
+
+      final QuerySnapshot<Map<String, dynamic>> postDocs =
+          await FirebaseFirestore.instance
+              .collection('posts')
+              .where('username', isEqualTo: username)
+              .orderBy('timestamp', descending: true)
+              .get();
+
+      posts = postDocs.docs.map((doc) {
+        final data = doc.data();
+        return data;
+      }).toList();
+    }
+
+    return posts;
   }
 }
