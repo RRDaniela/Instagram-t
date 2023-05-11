@@ -11,12 +11,14 @@ class InstagramtPost extends StatefulWidget {
   final String imageUrl;
   final String username;
   final String caption;
+  final String Nlikes;
   const InstagramtPost({
     super.key,
     required this.imageUrl,
     required this.username,
     required this.caption,
     required this.postId,
+    required this.Nlikes,
   });
 
   // Find profile image from username using firebase
@@ -28,6 +30,7 @@ class InstagramtPost extends StatefulWidget {
 class _InstagramtPostState extends State<InstagramtPost> {
   String? _profileImageUrl;
   bool _isLiked = false;
+  int? _likesCount = 0;
 
   Future<void> incrementLikesCount(String postId) async {
     final postRef = FirebaseFirestore.instance.collection('posts').doc(postId);
@@ -35,6 +38,10 @@ class _InstagramtPostState extends State<InstagramtPost> {
     final currentLikesCount = postSnapshot['likes_count'] as int;
     final newLikesCount = currentLikesCount + 1;
     await postRef.update({'likes_count': newLikesCount});
+
+    getLikesCount(widget.postId).then((value) => setState(() {
+          _likesCount = value;
+    }));
   }
 
   Future<void> decrementLikesCount(String postId) async {
@@ -43,6 +50,17 @@ class _InstagramtPostState extends State<InstagramtPost> {
     final currentLikesCount = postSnapshot['likes_count'] as int;
     final newLikesCount = currentLikesCount - 1;
     await postRef.update({'likes_count': newLikesCount});
+
+    getLikesCount(widget.postId).then((value) => setState(() {
+          _likesCount = value;
+    }));
+    
+  }
+
+  Future<int> getLikesCount(String postId) async {
+    final postSnapshot =
+        await FirebaseFirestore.instance.collection('posts').doc(postId).get();
+    return postSnapshot['likes_count'];
   }
 
   Future<void> _checkLikeStatus() async {
@@ -58,6 +76,9 @@ class _InstagramtPostState extends State<InstagramtPost> {
     super.initState();
     _fetchProfileImageUrl();
     _checkLikeStatus();
+    getLikesCount(widget.postId).then((value) => setState(() {
+          _likesCount = value;
+    }));
   }
 
   Future<String> getProfileImageUrl(String username) async {
@@ -196,6 +217,22 @@ class _InstagramtPostState extends State<InstagramtPost> {
                                 size: 20,
                                 color: AppColors.onSurfaceVariant,
                               ))
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                            child: Text(
+                              _likesCount.toString() + ' likes',
+                              style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.onSurfaceVariant),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                         ],
                       ),
                       Row(

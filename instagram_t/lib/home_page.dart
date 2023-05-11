@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage> {
         'imageUrl': post.imageUrl,
         'caption': post.caption,
         'postId': post.id,
+        'Nlikes': post.likes.length.toString()
       });
     }
 
@@ -124,6 +125,7 @@ class _HomePageState extends State<HomePage> {
                           imageUrl: listElements[index]["imageUrl"]!,
                           caption: listElements[index]["caption"]!,
                           postId: listElements[index]["postId"]!,
+                          Nlikes: listElements[index]["Nlikes"]!,
                         );
                       },
                     ),
