@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/home_page.dart';
 import 'package:instagram_t/providers/profile_provider.dart';
+import 'package:instagram_t/providers/searchUser_provider.dart';
 import 'package:instagram_t/providers/userData_provider.dart';
 import 'package:instagram_t/providers/user_profile_provider.dart';
 import 'package:instagram_t/screens/signup_screen.dart';
@@ -15,6 +16,9 @@ void main() {
     ),
     ChangeNotifierProvider(
       create: (context) => UserProfileProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (context) => SearchUserProvider(),
     ),
     ChangeNotifierProvider(create: (context) => ProfileProvider()),
   ], child: MyApp()));
