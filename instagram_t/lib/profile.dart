@@ -40,12 +40,11 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     int crossAxisCount = _isListView ? 1 : 3;
-    int itemCount = context.read<ProfileProvider>().getPostsCount().toInt();
     double aspectRatio = 1.0;
-    if (itemCount > 4 && !_isListView) {
+    /* if (itemCount > 4 && !_isListView) {
       crossAxisCount = 3;
       aspectRatio = 1.0;
-    }
+    } */
     return Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.background,
@@ -124,10 +123,7 @@ class _ProfileState extends State<Profile> {
                             children: [
                               Text(
                                   style: myTextStyle,
-                                  context
-                                      .read<ProfileProvider>()
-                                      .getPostsCount()
-                                      .toString()),
+                                  posts.length.toString()),
                               Text(
                                   style: TextStyle(
                                       fontSize: 15,
@@ -235,7 +231,7 @@ class _ProfileState extends State<Profile> {
                                   mainAxisSpacing: 2.0,
                                   childAspectRatio: aspectRatio,
                                 ),
-                                itemCount: itemCount,
+                                itemCount: posts.length,
                                 itemBuilder: (context, index) {
                                   final post = posts[index];
                                   return Padding(

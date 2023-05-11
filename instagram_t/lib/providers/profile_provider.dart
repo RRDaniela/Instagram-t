@@ -114,10 +114,6 @@ class ProfileProvider with ChangeNotifier {
     }
   }
 
-  int getPostsCount() {
-    return _postsCount;
-  }
-
   void _setFollowingCount() {
     if (_userData != null && _userData!['following_count'] != null) {
       _followingCount = _userData!['following_count'];
@@ -158,6 +154,26 @@ class ProfileProvider with ChangeNotifier {
 
   String getUsername() {
     return _userName;
+  }
+
+  Future<int> getPostsCount(String id) async {
+    int count = 0;
+    final QuerySnapshot<Map<String, dynamic>> user = await FirebaseFirestore
+        .instance
+        .collection('users')
+        .where('id', isEqualTo: id)
+        .get();
+    if (user.docs.isNotEmpty) {
+      String username = user.docs.first.data()['username'];
+
+      final QuerySnapshot<Map<String, dynamic>> postDocs =
+          await FirebaseFirestore.instance
+              .collection('posts')
+              .where('username', isEqualTo: username)
+              .get();
+      count = postDocs.docs.length;
+    }
+    return count;
   }
 
   Future<List<Map<String, dynamic>>> getPostsForUsername(String id) async {
