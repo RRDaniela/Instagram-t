@@ -3,6 +3,7 @@ import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/home_page.dart';
 import 'package:instagram_t/providers/profile_provider.dart';
 import 'package:instagram_t/providers/userData_provider.dart';
+import 'package:instagram_t/providers/user_profile_provider.dart';
 import 'package:instagram_t/screens/signup_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +12,9 @@ void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
       create: (context) => UserDataProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (context) => UserProfileProvider(),
     ),
     ChangeNotifierProvider(create: (context) => ProfileProvider()),
   ], child: MyApp()));

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/colors.dart';
 import 'package:instagram_t/providers/profile_provider.dart';
+import 'package:instagram_t/providers/user_profile_provider.dart';
 import 'package:instagram_t/resources/firestore_methods.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
@@ -34,9 +35,9 @@ class _UserProfileState extends State<UserProfile> {
   @override
   void initState() {
     super.initState();
-    _userDataFuture = Provider.of<ProfileProvider>(context, listen: false)
+    _userDataFuture = Provider.of<UserProfileProvider>(context, listen: false)
         .getUserData(widget.user_follow!['id'], context);
-    _postsFuture = Provider.of<ProfileProvider>(context, listen: false)
+    _postsFuture = Provider.of<UserProfileProvider>(context, listen: false)
         .getPostsForUsername(widget.user_follow!['id']);
     _checkFollowStatus();
   }
@@ -55,7 +56,7 @@ class _UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     int crossAxisCount = _isListView ? 1 : 3;
-    int itemCount = context.read<ProfileProvider>().getPostsCount().toInt();
+    int itemCount = context.read<UserProfileProvider>().getPostsCount().toInt();
     double aspectRatio = 1.0;
     if (itemCount > 4 && !_isListView) {
       crossAxisCount = 3;
@@ -65,7 +66,7 @@ class _UserProfileState extends State<UserProfile> {
         appBar: AppBar(
           backgroundColor: AppColors.background,
           title: Text(
-            context.read<ProfileProvider>().getUsername().toLowerCase(),
+            context.read<UserProfileProvider>().getUsername().toLowerCase(),
           ),
         ),
         body: FutureBuilder(
@@ -93,7 +94,7 @@ class _UserProfileState extends State<UserProfile> {
                                 height: 100,
                                 child: Image.network(
                                   context
-                                      .read<ProfileProvider>()
+                                      .read<UserProfileProvider>()
                                       .getProfilePicture()
                                       .toString(),
                                   fit: BoxFit.cover,
@@ -115,7 +116,7 @@ class _UserProfileState extends State<UserProfile> {
                                   color: AppColors.textColorGrey),
                               '@' +
                                   context
-                                      .read<ProfileProvider>()
+                                      .read<UserProfileProvider>()
                                       .getUsername()
                                       .toLowerCase()),
                         ),
@@ -125,7 +126,7 @@ class _UserProfileState extends State<UserProfile> {
                       Text(
                           style: TextStyle(fontSize: 15),
                           context
-                              .read<ProfileProvider>()
+                              .read<UserProfileProvider>()
                               .getDescription()
                               .toLowerCase()),
                     ]),
@@ -171,7 +172,7 @@ class _UserProfileState extends State<UserProfile> {
                               Text(
                                   style: myTextStyle,
                                   context
-                                      .read<ProfileProvider>()
+                                      .read<UserProfileProvider>()
                                       .getPostsCount()
                                       .toString()),
                               Text(
@@ -186,7 +187,7 @@ class _UserProfileState extends State<UserProfile> {
                               Text(
                                   style: myTextStyle,
                                   context
-                                      .read<ProfileProvider>()
+                                      .read<UserProfileProvider>()
                                       .getFollowersCount()
                                       .toString()),
                               Text(
@@ -201,7 +202,7 @@ class _UserProfileState extends State<UserProfile> {
                               Text(
                                   style: myTextStyle,
                                   context
-                                      .read<ProfileProvider>()
+                                      .read<UserProfileProvider>()
                                       .getFollowingCount()
                                       .toString()),
                               Text(
@@ -338,8 +339,9 @@ class _UserProfileState extends State<UserProfile> {
       _isFollowing = false;
     });
     if (_userData != null && _userData!['followers_count'] != null) {
-      Provider.of<ProfileProvider>(context, listen: false).updateFollowersCount(
-          other_user_id, _userData!['followers_count'] - 1);
+      Provider.of<UserProfileProvider>(context, listen: false)
+          .updateFollowersCount(
+              other_user_id, _userData!['followers_count'] - 1);
     }
   }
 
@@ -352,8 +354,9 @@ class _UserProfileState extends State<UserProfile> {
       _isFollowing = true;
     });
     if (_userData != null && _userData!['followers_count'] != null) {
-      Provider.of<ProfileProvider>(context, listen: false).updateFollowersCount(
-          other_user_id, _userData!['followers_count'] + 1);
+      Provider.of<UserProfileProvider>(context, listen: false)
+          .updateFollowersCount(
+              other_user_id, _userData!['followers_count'] + 1);
     }
   }
 }
