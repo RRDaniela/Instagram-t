@@ -9,6 +9,7 @@ import 'package:instagram_t/colors.dart';
 import 'package:instagram_t/models/posts.dart';
 import 'package:instagram_t/profile.dart';
 import 'package:instagram_t/screens/login_screen.dart';
+import 'package:instagram_t/users_search.dart';
 
 class HomePage extends StatefulWidget {
   final User current_user;
@@ -65,7 +66,15 @@ class _HomePageState extends State<HomePage> {
               Icons.search,
               color: AppColors.outlinedIcons,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UserList(
+                          current_user: widget.current_user,
+                        )),
+              );
+            },
           ),
           IconButton(
               onPressed: () {},
@@ -115,7 +124,6 @@ class _HomePageState extends State<HomePage> {
                           imageUrl: listElements[index]["imageUrl"]!,
                           caption: listElements[index]["caption"]!,
                           postId: listElements[index]["postId"]!,
-
                         );
                       },
                     ),
@@ -147,11 +155,6 @@ class _HomePageState extends State<HomePage> {
                         builder: (context) =>
                             AddPost(current_user: widget.current_user)),
                   );
-                  //TODO: SEND TO ADD SCREEN
-                  /*Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddScreen()),
-                  );*/
                 },
                 child: Icon(Icons.add, color: AppColors.onTertiary),
               ),

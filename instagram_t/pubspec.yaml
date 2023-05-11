@@ -31,15 +31,17 @@ dependencies:
   flutter:
     sdk: flutter
   camera: ^0.10.3+2
-  image_picker: ^0.8.7+1
+  image_picker: ^0.8.7+4
   photo_manager: ^2.6.0
   path_provider: ^2.0.14
   permission_handler: ^10.2.0
   firebase_core:
   firebase_storage:
+  flutterfire_ui:
   firebase_auth:
   cloud_firestore:
   provider:
+  image_picker_gallery_camera:
   flutter_bloc:
 
   # The following adds the Cupertino Icons font to your application.
@@ -49,6 +51,7 @@ dependencies:
   cached_network_image: ^3.2.3
   skeletons: ^0.0.3
   shimmer_animation: ^2.1.0
+  image_cropper: ^3.0.3
 
 dev_dependencies:
   flutter_test:
@@ -132,7 +135,6 @@ flutter:
         - asset: assets/fonts/poppins/Poppins-SemiBoldItalic.ttf
         - asset: assets/fonts/poppins/Poppins-Thin.ttf
         - asset: assets/fonts/poppins/Poppins-ThinItalic.ttf
-        
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

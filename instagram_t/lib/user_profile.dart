@@ -4,22 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/colors.dart';
 import 'package:instagram_t/providers/profile_provider.dart';
+import 'package:instagram_t/resources/firestore_methods.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
-class Profile extends StatefulWidget {
+class UserProfile extends StatefulWidget {
   final User current_user;
-
-  Profile({
+  final Map<String, dynamic>? user_follow;
+  UserProfile({
     super.key,
     required this.current_user,
+    required this.user_follow,
   });
 
   @override
-  State<Profile> createState() => _ProfileState();
+  State<UserProfile> createState() => _UserProfileState();
 }
 
-class _ProfileState extends State<Profile> {
+class _UserProfileState extends State<UserProfile> {
+  bool _isFollowing = false;
   late Future<Map<String, dynamic>> _userDataFuture;
   late Future<List<Map<String, dynamic>>> _postsFuture;
   bool _isListView = false;
@@ -32,9 +35,21 @@ class _ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     _userDataFuture = Provider.of<ProfileProvider>(context, listen: false)
-        .getUserData(widget.current_user.uid, context);
+        .getUserData(widget.user_follow!['id'], context);
     _postsFuture = Provider.of<ProfileProvider>(context, listen: false)
-        .getPostsForUsername(widget.current_user.uid);
+        .getPostsForUsername(widget.user_follow!['id']);
+    _checkFollowStatus();
+  }
+
+  Future<void> _checkFollowStatus() async {
+    final isFollowing = await FirestoreMethods().isFollowing(
+      Auth.getCurrentUser().uid,
+      widget.user_follow!['id'],
+    );
+
+    setState(() {
+      _isFollowing = isFollowing;
+    });
   }
 
   @override
@@ -62,7 +77,7 @@ class _ProfileState extends State<Profile> {
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else {
-                final userData = snapshot.data![0] as Map<String, dynamic>;
+                final userData = widget.user_follow;
                 final posts = snapshot.data![1] as List<Map<String, dynamic>>;
                 return Column(
                   children: [
@@ -108,13 +123,44 @@ class _ProfileState extends State<Profile> {
                     ),
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Text(
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 15),
                           context
                               .read<ProfileProvider>()
                               .getDescription()
                               .toLowerCase()),
                     ]),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                  _isFollowing
+                                      ? AppColors.primary
+                                      : AppColors.secondary,
+                                ),
+                              ),
+                              onPressed: () {
+                                if (_isFollowing) {
+                                  _unfollowUser(Auth.getCurrentUser().uid,
+                                      widget.user_follow!['id']);
+                                } else {
+                                  _followUser(Auth.getCurrentUser().uid,
+                                      widget.user_follow!['id']);
+                                }
+                              },
+                              child: Text(
+                                _isFollowing ? 'Unfollow' : 'Follow',
+                                style: TextStyle(color: AppColors.onPrimary),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     Padding(
                       padding: EdgeInsets.only(top: 15.0),
                       child: Row(
@@ -223,54 +269,57 @@ class _ProfileState extends State<Profile> {
                     ),
                     Row(
                       children: [
-                        SingleChildScrollView(
-                          child: SizedBox(
-                              height: 360,
-                              width: 350,
-                              child: GridView.builder(
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: crossAxisCount,
-                                  crossAxisSpacing: 2.0,
-                                  mainAxisSpacing: 2.0,
-                                  childAspectRatio: aspectRatio,
-                                ),
-                                itemCount: itemCount,
-                                itemBuilder: (context, index) {
-                                  final post = posts[index];
-                                  return Padding(
-                                    padding: EdgeInsets.all(4.0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5)),
-                                        border: Border.all(
-                                            color: AppColors.background,
-                                            width: 2.0),
-                                      ),
-                                      child: ClipRRect(
+                        Container(
+                          child: SingleChildScrollView(
+                            child: SizedBox(
+                                height: 320,
+                                width: 350,
+                                child: GridView.builder(
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: crossAxisCount,
+                                    crossAxisSpacing: 2.0,
+                                    mainAxisSpacing: 2.0,
+                                    childAspectRatio: aspectRatio,
+                                  ),
+                                  itemCount: itemCount,
+                                  itemBuilder: (context, index) {
+                                    final post = posts[index];
+                                    return Padding(
+                                      padding: EdgeInsets.all(4.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(5)),
-                                          child: CachedNetworkImage(
-                                              imageUrl: post['imageUrl'],
-                                              fit: BoxFit.cover,
-                                              progressIndicatorBuilder:
-                                                  (context, url,
-                                                          downloadProgress) =>
-                                                      Shimmer(
-                                                        direction: ShimmerDirection
-                                                            .fromLeftToRight(), //Default value: Duration(seconds: 0)
-                                                        child: Container(
-                                                          width: 360,
-                                                          height: 350,
-                                                          color:
-                                                              Colors.grey[300],
-                                                        ),
-                                                      ))),
-                                    ),
-                                  );
-                                },
-                              )),
+                                          border: Border.all(
+                                              color: AppColors.background,
+                                              width: 2.0),
+                                        ),
+                                        child: ClipRRect(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5)),
+                                            child: CachedNetworkImage(
+                                                imageUrl: post['imageUrl'],
+                                                fit: BoxFit.cover,
+                                                progressIndicatorBuilder:
+                                                    (context, url,
+                                                            downloadProgress) =>
+                                                        Shimmer(
+                                                          direction:
+                                                              ShimmerDirection
+                                                                  .fromLeftToRight(), //Default value: Duration(seconds: 0)
+                                                          child: Container(
+                                                            width: 360,
+                                                            height: 350,
+                                                            color: Colors
+                                                                .grey[300],
+                                                          ),
+                                                        ))),
+                                      ),
+                                    );
+                                  },
+                                )),
+                          ),
                         ),
                       ],
                     )
@@ -278,5 +327,33 @@ class _ProfileState extends State<Profile> {
                 );
               }
             }));
+  }
+
+  void _unfollowUser(String current_user_id, other_user_id) async {
+    await FirestoreMethods()
+        .decrementFollowersCount(other_user_id, current_user_id);
+    await FirestoreMethods()
+        .decrementFollowingCount(other_user_id, current_user_id);
+    setState(() {
+      _isFollowing = false;
+    });
+    if (_userData != null && _userData!['followers_count'] != null) {
+      Provider.of<ProfileProvider>(context, listen: false).updateFollowersCount(
+          other_user_id, _userData!['followers_count'] - 1);
+    }
+  }
+
+  void _followUser(String current_user_id, other_user_id) async {
+    await FirestoreMethods()
+        .incrementFollowersCount(other_user_id, current_user_id);
+    await FirestoreMethods()
+        .incrementFollowingCount(other_user_id, current_user_id);
+    setState(() {
+      _isFollowing = true;
+    });
+    if (_userData != null && _userData!['followers_count'] != null) {
+      Provider.of<ProfileProvider>(context, listen: false).updateFollowersCount(
+          other_user_id, _userData!['followers_count'] + 1);
+    }
   }
 }

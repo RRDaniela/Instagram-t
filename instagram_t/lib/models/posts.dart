@@ -20,8 +20,6 @@ class Post {
   static Post fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 
-    print(snapshot);
-
     return Post(
       caption: snapshot["caption"],
       username: snapshot["username"],

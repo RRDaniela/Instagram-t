@@ -33,6 +33,7 @@ class PostProvider {
       'likes': [],
       'username': await getUserName(userId),
       'timestamp': await Timestamp.fromDate(timestamp),
+      'likes_count': 0
     });
 
     final userRef = _db.collection('users').where('id', isEqualTo: userId);

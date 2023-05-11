@@ -111,8 +111,7 @@ class _AddPictureState extends State<AddPicture> {
                       PermissionStatus status =
                           await Permission.camera.request();
                       if (status == PermissionStatus.granted) {
-                        final imagePicker = ImagePicker();
-                        XFile? pickedFile = await imagePicker.pickImage(
+                        final pickedFile = await ImagePicker().pickImage(
                             source: ImageSource.gallery, imageQuality: 20);
                         setState(() {
                           pickedImage = File(pickedFile!.path);

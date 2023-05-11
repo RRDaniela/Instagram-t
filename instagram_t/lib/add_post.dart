@@ -1,12 +1,15 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:instagram_t/add_caption.dart';
 import 'package:instagram_t/auth.dart';
+import 'package:image_picker/image_picker.dart';
+
 import 'package:instagram_t/colors.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AddPost extends StatefulWidget {
@@ -22,7 +25,7 @@ class AddPost extends StatefulWidget {
 }
 
 class _AddPostState extends State<AddPost> {
-  final picker = ImagePicker();
+  final ImageCropper _imageCropper = ImageCropper();
   late ValueNotifier<File?> _selectedImageNotifier;
 
   @override
@@ -50,7 +53,12 @@ class _AddPostState extends State<AddPost> {
   }
 
   Future<void> _selectFromGallery() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      imageQuality: 70,
+      maxWidth: 300,
+      maxHeight: 300,
+    );
     if (pickedFile != null) {
       final tempDir = await getTemporaryDirectory();
       final tempPath =
@@ -94,14 +102,28 @@ class _AddPostState extends State<AddPost> {
   }
 
   Future<void> _takePhoto() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.camera);
-    if (pickedFile != null) {
-      final tempDir = await getTemporaryDirectory();
-      final tempPath =
-          '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final tempFile = await File(pickedFile.path).copy(tempPath);
+    try {
+      var pickedFile = await ImagePicker().pickImage(
+        source: ImageSource.camera,
+        imageQuality: 70,
+        maxWidth: 300,
+        maxHeight: 300,
+      );
 
-      _selectedImageNotifier.value = tempFile;
+      if (pickedFile != null) {
+        final tempDir = await getTemporaryDirectory();
+        final tempPath =
+            '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final tempFile = await File(pickedFile.path).copy(tempPath);
+
+        setState(() {
+          _selectedImageNotifier.value = tempFile;
+        });
+      }
+    } catch (e, stackTrace) {
+      print('Error taking photo: $e');
+      print('Stack trace: $stackTrace');
+      // Handle the error or display an error message to the user
     }
   }
 

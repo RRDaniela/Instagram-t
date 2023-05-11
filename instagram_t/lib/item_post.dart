@@ -29,8 +29,25 @@ class _InstagramtPostState extends State<InstagramtPost> {
   String? _profileImageUrl;
   bool _isLiked = false;
 
+  Future<void> incrementLikesCount(String postId) async {
+    final postRef = FirebaseFirestore.instance.collection('posts').doc(postId);
+    final postSnapshot = await postRef.get();
+    final currentLikesCount = postSnapshot['likes_count'] as int;
+    final newLikesCount = currentLikesCount + 1;
+    await postRef.update({'likes_count': newLikesCount});
+  }
+
+  Future<void> decrementLikesCount(String postId) async {
+    final postRef = FirebaseFirestore.instance.collection('posts').doc(postId);
+    final postSnapshot = await postRef.get();
+    final currentLikesCount = postSnapshot['likes_count'] as int;
+    final newLikesCount = currentLikesCount - 1;
+    await postRef.update({'likes_count': newLikesCount});
+  }
+
   Future<void> _checkLikeStatus() async {
-    bool liked = await FirestoreMethods().isPostLiked(widget.postId, Auth.getCurrentUser().uid);
+    bool liked = await FirestoreMethods()
+        .isPostLiked(widget.postId, Auth.getCurrentUser().uid);
     setState(() {
       _isLiked = liked;
     });
@@ -120,9 +137,10 @@ class _InstagramtPostState extends State<InstagramtPost> {
                             child: CachedNetworkImage(
                               imageUrl: widget.imageUrl,
                               fit: BoxFit.cover,
-                              progressIndicatorBuilder: (context, url, downloadProgress) => Shimmer(
-
-                                direction: ShimmerDirection.fromLeftToRight(), //Default value: Duration(seconds: 0)
+                              progressIndicatorBuilder:
+                                  (context, url, downloadProgress) => Shimmer(
+                                direction: ShimmerDirection
+                                    .fromLeftToRight(), //Default value: Duration(seconds: 0)
                                 child: Container(
                                   width: 300,
                                   height: 300,
@@ -148,16 +166,28 @@ class _InstagramtPostState extends State<InstagramtPost> {
                         children: [
                           IconButton(
                               onPressed: () async {
-                                bool updatedLikeStatus = await FirestoreMethods().likePost(widget.postId, Auth.getCurrentUser().uid);
+                                bool updatedLikeStatus =
+                                    await FirestoreMethods().likePost(
+                                        widget.postId,
+                                        Auth.getCurrentUser().uid);
+                                if (updatedLikeStatus == true) {
+                                  incrementLikesCount(widget.postId);
+                                } else {
+                                  decrementLikesCount(widget.postId);
+                                }
 
                                 setState(() {
                                   _isLiked = updatedLikeStatus;
                                 });
                               },
                               icon: Icon(
-                                _isLiked ? Icons.favorite : Icons.favorite_border_outlined,
+                                _isLiked
+                                    ? Icons.favorite
+                                    : Icons.favorite_border_outlined,
                                 size: 20,
-                                color: _isLiked ? Colors.red : AppColors.onSurfaceVariant,
+                                color: _isLiked
+                                    ? Colors.red
+                                    : AppColors.onSurfaceVariant,
                               )),
                           IconButton(
                               onPressed: () {},

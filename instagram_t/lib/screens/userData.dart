@@ -24,8 +24,6 @@ class _UserDataState extends State<UserData> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Consumer<UserDataProvider>(builder: (context, provider, child) {
-      
-      print(widget.current_user);
       return Container(
         color: AppColors.background,
         child: Column(
