@@ -56,8 +56,7 @@ class _UserProfileState extends State<UserProfile> {
   Widget build(BuildContext context) {
     int crossAxisCount = _isListView ? 1 : 3;
     double aspectRatio = 1.0;
-    crossAxisCount = 3;
-    aspectRatio = 1.0;
+  
     return Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.background,
