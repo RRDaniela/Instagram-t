@@ -162,9 +162,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                         current_user: current_user,
                                       )));
                         }
-                      } on FirebaseException catch (e) {
+                      } on Exception catch (e) {
                         setState(() {
-                          _error = e.message!;
+                          _error = e.toString();
+                          _error = _error.replaceAll("Exception:", "");
                         });
                         print(e);
                       }
@@ -207,11 +208,24 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
 
                 const SizedBox(height: 20),
-
-                Text(
-                  _error,
-                  style: TextStyle(color: AppColors.error),
-                ),
+                if (_error.isNotEmpty)
+                  (Container(
+                    width: 300,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: AppColors.errorContainer,
+                      border: Border.all(color: AppColors.error, width: 2.0),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Center(
+                        child: Text(
+                          _error,
+                          style: TextStyle(color: AppColors.error),
+                        ),
+                      ),
+                    ),
+                  ))
               ],
             ),
           ),
