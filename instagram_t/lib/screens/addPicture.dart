@@ -146,7 +146,12 @@ class _AddPictureState extends State<AddPicture> {
                             'username': widget.username,
                             'description': '',
                             'image': downloadURL,
-                            'id': widget.current_user.uid
+                            'id': widget.current_user.uid,
+                            'followers': [''],
+                            'followers_count': 0,
+                            'following': [''],
+                            'following_count': 0,
+                            'number_of_posts': 0
                           }).then((_) {
                             Navigator.push(
                                 context,

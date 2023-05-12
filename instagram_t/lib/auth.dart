@@ -23,9 +23,12 @@ class Auth {
       user = auth.currentUser;
     } on FirebaseException catch (e) {
       if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
+        throw Exception('The password provided is too weak.');
+      }
+      if (e.code == 'invalid-email') {
+        throw Exception('The email address is not valid.');
       } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
+        throw Exception('The account already exists for that email.');
       }
     }
 
@@ -48,9 +51,9 @@ class Auth {
       user = userCredential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('No user found for that email.');
+        throw Exception('No user found for that email.');
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided.');
+        throw Exception('Wrong password provided.');
       }
     }
 

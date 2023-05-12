@@ -8,8 +8,12 @@ import 'package:instagram_t/item_post.dart';
 import 'package:instagram_t/colors.dart';
 import 'package:instagram_t/models/posts.dart';
 import 'package:instagram_t/profile.dart';
+import 'package:instagram_t/providers/searchUser_provider.dart';
 import 'package:instagram_t/screens/login_screen.dart';
+import 'package:instagram_t/user_profile.dart';
 import 'package:instagram_t/users_search.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   final User current_user;
@@ -98,44 +102,54 @@ class _HomePageState extends State<HomePage> {
               )),
         ],
       ),
-      body: FutureBuilder(
-        future: getUsers(),
-        builder: (BuildContext context,
-            AsyncSnapshot<List<Map<String, String>>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            List<Map<String, String>> listElements = snapshot.data!;
-            return Column(
-              children: [
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: _refreshPage,
-                    child: ListView.builder(
-                      cacheExtent: 9999,
-                      controller: _scrollController,
-                      padding: EdgeInsets.zero,
-                      scrollDirection: Axis.vertical,
-                      itemCount: listElements.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return InstagramtPost(
-                          username: listElements[index]["username"]!,
-                          imageUrl: listElements[index]["imageUrl"]!,
-                          caption: listElements[index]["caption"]!,
-                          postId: listElements[index]["postId"]!,
-                          Nlikes: listElements[index]["Nlikes"]!,
-                        );
-                      },
-                    ),
-                  ),
-                )
-              ],
-            );
-          }
-        },
-      ),
+      body: Consumer<SearchUserProvider>(builder: (context, searchProvider, _) {
+        return FutureBuilder(
+            future: getUsers(),
+            builder: (BuildContext context,
+                AsyncSnapshot<List<Map<String, String>>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else {
+                List<Map<String, String>> listElements = snapshot.data!;
+                return Column(
+                  children: [
+                    Expanded(
+                      child: LiquidPullToRefresh(
+                        color: AppColors.primary,
+                        onRefresh: _refreshPage,
+                        child: ListView.builder(
+                          cacheExtent: 9999,
+                          controller: _scrollController,
+                          padding: EdgeInsets.zero,
+                          scrollDirection: Axis.vertical,
+                          itemCount: listElements.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return GestureDetector(
+                              onTap: () {
+                                String username =
+                                    listElements[index]["username"]!;
+                                searchProvider.navigateToProfile(
+                                    context, widget.current_user, username);
+                              },
+                              child: InstagramtPost(
+                                username: listElements[index]["username"]!,
+                                imageUrl: listElements[index]["imageUrl"]!,
+                                caption: listElements[index]["caption"]!,
+                                postId: listElements[index]["postId"]!,
+                                Nlikes: listElements[index]["Nlikes"]!,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              }
+            });
+      }),
       bottomNavigationBar: BottomAppBar(
         color: AppColors.surface,
         child: Container(
@@ -144,7 +158,13 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              HomePage(current_user: widget.current_user)));
+                },
                 icon: Icon(Icons.home),
                 color: AppColors.onSurface,
               ),
