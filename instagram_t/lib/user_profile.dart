@@ -6,6 +6,7 @@ import 'package:instagram_t/colors.dart';
 import 'package:instagram_t/providers/profile_provider.dart';
 import 'package:instagram_t/providers/user_profile_provider.dart';
 import 'package:instagram_t/resources/firestore_methods.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
@@ -23,6 +24,10 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
+  Future<void> _refreshPage() async {
+    setState(() {});
+  }
+
   bool _isFollowing = false;
   late Future<Map<String, dynamic>> _userDataFuture;
   late Future<List<Map<String, dynamic>>> _postsFuture;
@@ -275,51 +280,54 @@ class _UserProfileState extends State<UserProfile> {
                             child: SizedBox(
                                 height: 320,
                                 width: 350,
-                                child: GridView.builder(
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: crossAxisCount,
-                                    crossAxisSpacing: 2.0,
-                                    mainAxisSpacing: 2.0,
-                                    childAspectRatio: aspectRatio,
-                                  ),
-                                  itemCount: itemCount,
-                                  itemBuilder: (context, index) {
-                                    final post = posts[index];
-                                    return Padding(
-                                      padding: EdgeInsets.all(4.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(5)),
-                                          border: Border.all(
-                                              color: AppColors.background,
-                                              width: 2.0),
-                                        ),
-                                        child: ClipRRect(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(5)),
-                                            child: CachedNetworkImage(
-                                                imageUrl: post['imageUrl'],
-                                                fit: BoxFit.cover,
-                                                progressIndicatorBuilder:
-                                                    (context, url,
-                                                            downloadProgress) =>
-                                                        Shimmer(
-                                                          direction:
-                                                              ShimmerDirection
-                                                                  .fromLeftToRight(), //Default value: Duration(seconds: 0)
-                                                          child: Container(
-                                                            width: 360,
-                                                            height: 350,
-                                                            color: Colors
-                                                                .grey[300],
-                                                          ),
-                                                        ))),
+                                child: LiquidPullToRefresh(
+                                    color: AppColors.primary,
+                                    onRefresh: _refreshPage,
+                                    child: GridView.builder(
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: crossAxisCount,
+                                        crossAxisSpacing: 2.0,
+                                        mainAxisSpacing: 2.0,
+                                        childAspectRatio: aspectRatio,
                                       ),
-                                    );
-                                  },
-                                )),
+                                      itemCount: itemCount,
+                                      itemBuilder: (context, index) {
+                                        final post = posts[index];
+                                        return Padding(
+                                          padding: EdgeInsets.all(4.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5)),
+                                              border: Border.all(
+                                                  color: AppColors.background,
+                                                  width: 2.0),
+                                            ),
+                                            child: ClipRRect(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(5)),
+                                                child: CachedNetworkImage(
+                                                    imageUrl: post['imageUrl'],
+                                                    fit: BoxFit.cover,
+                                                    progressIndicatorBuilder:
+                                                        (context, url,
+                                                                downloadProgress) =>
+                                                            Shimmer(
+                                                              direction:
+                                                                  ShimmerDirection
+                                                                      .fromLeftToRight(), //Default value: Duration(seconds: 0)
+                                                              child: Container(
+                                                                width: 360,
+                                                                height: 350,
+                                                                color: Colors
+                                                                    .grey[300],
+                                                              ),
+                                                            ))),
+                                          ),
+                                        );
+                                      },
+                                    ))),
                           ),
                         ),
                       ],
