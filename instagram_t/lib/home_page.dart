@@ -12,6 +12,7 @@ import 'package:instagram_t/providers/searchUser_provider.dart';
 import 'package:instagram_t/screens/login_screen.dart';
 import 'package:instagram_t/user_profile.dart';
 import 'package:instagram_t/users_search.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -115,7 +116,8 @@ class _HomePageState extends State<HomePage> {
                 return Column(
                   children: [
                     Expanded(
-                      child: RefreshIndicator(
+                      child: LiquidPullToRefresh(
+                        color: AppColors.primary,
                         onRefresh: _refreshPage,
                         child: ListView.builder(
                           cacheExtent: 9999,

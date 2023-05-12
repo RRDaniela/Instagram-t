@@ -7,6 +7,7 @@ import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/colors.dart';
 import 'package:instagram_t/home_page.dart';
 import 'package:instagram_t/providers/profile_provider.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:instagram_t/user-edit.dart';
@@ -24,6 +25,10 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  Future<void> _refreshPage() async {
+    setState(() {});
+  }
+
   late Future<Map<String, dynamic>> _userDataFuture;
   late Future<List<Map<String, dynamic>>> _postsFuture;
   bool _isListView = false;
@@ -317,8 +322,11 @@ class _ProfileState extends State<Profile> {
                               )
                             : SingleChildScrollView(
                                 child: SizedBox(
-                                    height: 300,
-                                    width: 350,
+                                height: 300,
+                                width: 350,
+                                child: LiquidPullToRefresh(
+                                    color: AppColors.primary,
+                                    onRefresh: _refreshPage,
                                     child: GridView.builder(
                                       gridDelegate:
                                           SliverGridDelegateWithFixedCrossAxisCount(
@@ -364,7 +372,7 @@ class _ProfileState extends State<Profile> {
                                         );
                                       },
                                     )),
-                              ),
+                              )),
                       ],
                     )
                   ],
