@@ -147,9 +147,9 @@ class _AddPictureState extends State<AddPicture> {
                             'description': '',
                             'image': downloadURL,
                             'id': widget.current_user.uid,
-                            'followers': [''],
+                            'followers': null,
                             'followers_count': 0,
-                            'following': [''],
+                            'following': null,
                             'following_count': 0,
                             'number_of_posts': 0
                           }).then((_) {

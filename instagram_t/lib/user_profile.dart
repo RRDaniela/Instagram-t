@@ -172,7 +172,6 @@ class _UserProfileState extends State<UserProfile> {
                         children: [
                           Column(
                             children: [
-
                               Text(style: myTextStyle, posts.length.toString()),
                               Text(
                                   style: TextStyle(

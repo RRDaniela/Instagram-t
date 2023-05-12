@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,30 +26,73 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late Map<String, dynamic>? followingData;
   final _scrollController = ScrollController();
 
+  Future<String> getUserName(String userId) async {
+    final userSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('id', isEqualTo: userId)
+        .get();
+    if (userSnapshot.docs.isNotEmpty) {
+      final userData = userSnapshot.docs.first.data();
+      return userData['username'];
+    } else {
+      throw Exception('User not found');
+    }
+  }
+
   Future<List<Map<String, String>>> getUsers() async {
-    QuerySnapshot posts = await FirebaseFirestore.instance
-        .collection('posts')
-        .orderBy('timestamp', descending: true)
+    String userId = widget.current_user.uid;
+    late QuerySnapshot postsSnapshot;
+    QuerySnapshot followingSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('id', isEqualTo: userId)
         .get();
 
-    //final List<String> friends = List<String>.from(userDoc.data()['friends']);
-    List<Map<String, String>> listElements = [];
+    if (followingSnapshot.docs.isNotEmpty) {
+      followingData = followingSnapshot.docs[0].data() as Map<String, dynamic>?;
 
-    for (var doc in posts.docs) {
-      Post post = Post.fromSnap(doc);
+      if (followingData != null && followingData!['following'] != null) {
+        List<String> followingUserIds =
+            followingData!['following'].cast<String>();
 
-      listElements.add({
-        'username': post.username,
-        'imageUrl': post.imageUrl,
-        'caption': post.caption,
-        'postId': post.id,
-        'Nlikes': post.likes.length.toString()
-      });
+        List<String> followingUsernames = [];
+
+        for (String userId in followingUserIds) {
+          String username = await getUserName(userId);
+          followingUsernames.add(username);
+        }
+
+        if (followingUsernames.length > 0) {
+          postsSnapshot = await FirebaseFirestore.instance
+              .collection('posts')
+              .where('username', whereIn: followingUsernames)
+              .orderBy('timestamp', descending: true)
+              .get();
+
+          List<Map<String, String>> listElements = [];
+
+          if (postsSnapshot != null && postsSnapshot.docs.isNotEmpty) {
+            for (var doc in postsSnapshot.docs) {
+              Post post = Post.fromSnap(doc);
+
+              listElements.add({
+                'username': post.username,
+                'imageUrl': post.imageUrl,
+                'caption': post.caption,
+                'postId': post.id,
+                'Nlikes': post.likes.length.toString()
+              });
+            }
+          }
+
+          return listElements;
+        }
+      }
     }
 
-    return listElements;
+    return [];
   }
 
   Future<void> _refreshPage() async {
@@ -57,6 +101,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    const colorizeColors = [
+      Colors.purple,
+      Colors.blue,
+      Colors.yellow,
+      Colors.red,
+    ];
     return Scaffold(
       backgroundColor: (AppColors.background),
       appBar: AppBar(
@@ -115,36 +165,94 @@ class _HomePageState extends State<HomePage> {
                 List<Map<String, String>> listElements = snapshot.data!;
                 return Column(
                   children: [
-                    Expanded(
-                      child: LiquidPullToRefresh(
-                        color: AppColors.primary,
-                        onRefresh: _refreshPage,
-                        child: ListView.builder(
-                          cacheExtent: 9999,
-                          controller: _scrollController,
-                          padding: EdgeInsets.zero,
-                          scrollDirection: Axis.vertical,
-                          itemCount: listElements.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return GestureDetector(
-                              onTap: () {
-                                String username =
-                                    listElements[index]["username"]!;
-                                searchProvider.navigateToProfile(
-                                    context, widget.current_user, username);
-                              },
-                              child: InstagramtPost(
-                                username: listElements[index]["username"]!,
-                                imageUrl: listElements[index]["imageUrl"]!,
-                                caption: listElements[index]["caption"]!,
-                                postId: listElements[index]["postId"]!,
-                                Nlikes: listElements[index]["Nlikes"]!,
+                    listElements.isEmpty
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.all(10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image.network(
+                                          "https://cliply.co/wp-content/uploads/2021/09/142109670_SAD_CAT_400.gif",
+                                          height: 200,
+                                          width: 200,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                    )
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  AnimatedTextKit(
+                                    animatedTexts: [
+                                      TypewriterAnimatedText(
+                                        'Nothing new.',
+                                        textStyle: const TextStyle(
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Poppins'),
+                                        speed:
+                                            const Duration(milliseconds: 200),
+                                      ),
+                                      TypewriterAnimatedText(
+                                        'Find your friends!',
+                                        textStyle: const TextStyle(
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Poppins'),
+                                        speed:
+                                            const Duration(milliseconds: 200),
+                                      ),
+                                    ],
+                                    totalRepeatCount: 1,
+                                    pause: const Duration(milliseconds: 100),
+                                    displayFullTextOnTap: true,
+                                    stopPauseOnTap: true,
+                                  )
+                                ],
+                              ),
+                            ],
+                          )
+                        : Expanded(
+                            child: LiquidPullToRefresh(
+                              color: AppColors.primary,
+                              onRefresh: _refreshPage,
+                              child: ListView.builder(
+                                cacheExtent: 9999,
+                                controller: _scrollController,
+                                padding: EdgeInsets.zero,
+                                scrollDirection: Axis.vertical,
+                                itemCount: listElements.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      String username =
+                                          listElements[index]["username"]!;
+                                      searchProvider.navigateToProfile(context,
+                                          widget.current_user, username);
+                                    },
+                                    child: InstagramtPost(
+                                      username: listElements[index]
+                                          ["username"]!,
+                                      imageUrl: listElements[index]
+                                          ["imageUrl"]!,
+                                      caption: listElements[index]["caption"]!,
+                                      postId: listElements[index]["postId"]!,
+                                      Nlikes: listElements[index]["Nlikes"]!,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          )
                   ],
                 );
               }
