@@ -2,8 +2,10 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram_t/add_post.dart';
 import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/colors.dart';
+import 'package:instagram_t/home_page.dart';
 import 'package:instagram_t/providers/profile_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
@@ -62,318 +64,359 @@ class _ProfileState extends State<Profile> {
       aspectRatio = 1.0;
     }
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: AppColors.background,
-          title: Text(
-            context.read<ProfileProvider>().getUsername().toLowerCase(),
-          ),
-          actions: <Widget>[
-            IconButton(
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        title: Text(
+          context.read<ProfileProvider>().getUsername().toLowerCase(),
+        ),
+        actions: <Widget>[
+          IconButton(
               icon: Icon(
                 Icons.edit,
                 color: AppColors.outlinedIcons,
               ),
-              onPressed: (){
-                Navigator.push(context,
-                MaterialPageRoute(builder: (context) => UserEdit()),);
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UserEdit()),
+                );
               })
-          ],
-        ),
-        body: Consumer<ProfileProvider>(builder: (context, profileProvider, _) {
-          return FutureBuilder(
-              future: Future.wait([
-                _userDataFuture,
-                _postsFuture,
-              ]),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<dynamic>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else {
-                  final userData = snapshot.data![0] as Map<String, dynamic>;
-                  final posts = snapshot.data![1] as List<Map<String, dynamic>>;
+        ],
+      ),
+      body: Consumer<ProfileProvider>(builder: (context, profileProvider, _) {
+        return FutureBuilder(
+            future: Future.wait([
+              _userDataFuture,
+              _postsFuture,
+            ]),
+            builder:
+                (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else {
+                final userData = snapshot.data![0] as Map<String, dynamic>;
+                final posts = snapshot.data![1] as List<Map<String, dynamic>>;
 
-                  return Column(
-                    children: [
-                      Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                child: ClipOval(
-                                    child: SizedBox(
-                                  width: 100,
-                                  height: 100,
-                                  child: Image.network(
-                                    context
-                                        .read<ProfileProvider>()
-                                        .getProfilePicture()
-                                        .toString(),
-                                    fit: BoxFit.cover,
-                                  ),
-                                )),
-                                radius: 50,
-                              ),
-                            ],
-                          )),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 8.0),
-                            child: Text(
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.textColorGrey),
-                                '@' +
-                                    context
-                                        .read<ProfileProvider>()
-                                        .getUsername()
-                                        .toLowerCase()),
-                          ),
-                        ],
-                      ),
-                      Row(
+                return Column(
+                  children: [
+                    Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                                style: TextStyle(
-                                    fontSize: 15, fontWeight: FontWeight.bold),
-                                context
-                                    .read<ProfileProvider>()
-                                    .getDescription()
-                                    .toLowerCase()),
-                          ]),
-                      Padding(
-                        padding: EdgeInsets.only(top: 15.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                    style: myTextStyle,
-                                    context
-                                        .read<ProfileProvider>()
-                                        .getPostsCount()
-                                        .toString()),
-                                Text(
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        color: AppColors.textColorGrey),
-                                    "posts")
-                              ],
+                            CircleAvatar(
+                              child: ClipOval(
+                                  child: SizedBox(
+                                width: 100,
+                                height: 100,
+                                child: Image.network(
+                                  context
+                                      .read<ProfileProvider>()
+                                      .getProfilePicture()
+                                      .toString(),
+                                  fit: BoxFit.cover,
+                                ),
+                              )),
+                              radius: 50,
                             ),
-                            Column(
-                              children: [
-                                Text(
-                                    style: myTextStyle,
-                                    context
-                                        .read<ProfileProvider>()
-                                        .getFollowersCount()
-                                        .toString()),
-                                Text(
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        color: AppColors.textColorGrey),
-                                    "followers")
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Text(
-                                    style: myTextStyle,
-                                    context
-                                        .read<ProfileProvider>()
-                                        .getFollowingCount()
-                                        .toString()),
-                                Text(
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        color: AppColors.textColorGrey),
-                                    "following")
-                              ],
-                            )
                           ],
+                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 8.0),
+                          child: Text(
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textColorGrey),
+                              '@' +
+                                  context
+                                      .read<ProfileProvider>()
+                                      .getUsername()
+                                      .toLowerCase()),
                         ),
-                      ),
-                      Row(
+                      ],
+                    ),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      Text(
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                          context
+                              .read<ProfileProvider>()
+                              .getDescription()
+                              .toLowerCase()),
+                    ]),
+                    Padding(
+                      padding: EdgeInsets.only(top: 15.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          SizedBox(
-                            height: 10,
+                          Column(
+                            children: [
+                              Text(
+                                  style: myTextStyle,
+                                  context
+                                      .read<ProfileProvider>()
+                                      .getPostsCount()
+                                      .toString()),
+                              Text(
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: AppColors.textColorGrey),
+                                  "posts")
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                  style: myTextStyle,
+                                  context
+                                      .read<ProfileProvider>()
+                                      .getFollowersCount()
+                                      .toString()),
+                              Text(
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: AppColors.textColorGrey),
+                                  "followers")
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                  style: myTextStyle,
+                                  context
+                                      .read<ProfileProvider>()
+                                      .getFollowingCount()
+                                      .toString()),
+                              Text(
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: AppColors.textColorGrey),
+                                  "following")
+                            ],
                           )
                         ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _isListView = false;
-                              });
-                            },
-                            child: Container(
-                              height: 30,
-                              width: 30,
-                              child: Icon(
-                                Icons.grid_3x3,
-                                color: _isListView
-                                    ? AppColors.outlinedIcons
-                                    : Colors.black,
-                              ),
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          height: 10,
+                        )
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _isListView = false;
+                            });
+                          },
+                          child: Container(
+                            height: 30,
+                            width: 30,
+                            child: Icon(
+                              Icons.grid_3x3,
+                              color: _isListView
+                                  ? AppColors.outlinedIcons
+                                  : Colors.black,
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _isListView = true;
-                              });
-                            },
-                            child: Container(
-                              width: 30,
-                              height: 30,
-                              child: Icon(
-                                Icons.list,
-                                color: _isListView
-                                    ? Colors.black
-                                    : AppColors.outlinedIcons,
-                              ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _isListView = true;
+                            });
+                          },
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            child: Icon(
+                              Icons.list,
+                              color: _isListView
+                                  ? Colors.black
+                                  : AppColors.outlinedIcons,
                             ),
                           ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(
-                            height: 10,
-                          )
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          userData['number_of_posts'] == 0
-                              ? Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.all(10),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Image.network(
-                                                "https://cliply.co/wp-content/uploads/2021/09/142109670_SAD_CAT_400.gif",
-                                                height: 200,
-                                                width: 200,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        AnimatedTextKit(
-                                          animatedTexts: [
-                                            TypewriterAnimatedText(
-                                              'Nothing new.',
-                                              textStyle: const TextStyle(
-                                                  fontSize: 20.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: 'Poppins'),
-                                              speed: const Duration(
-                                                  milliseconds: 200),
-                                            ),
-                                            TypewriterAnimatedText(
-                                              'Add a post!',
-                                              textStyle: const TextStyle(
-                                                  fontSize: 20.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: 'Poppins'),
-                                              speed: const Duration(
-                                                  milliseconds: 200),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          height: 10,
+                        )
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        userData['number_of_posts'] == 0
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.all(10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Image.network(
+                                              "https://cliply.co/wp-content/uploads/2021/09/142109670_SAD_CAT_400.gif",
+                                              height: 200,
+                                              width: 200,
                                             ),
                                           ],
-                                          totalRepeatCount: 1,
-                                          pause:
-                                              const Duration(milliseconds: 100),
-                                          displayFullTextOnTap: true,
-                                          stopPauseOnTap: true,
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                )
-                              : SingleChildScrollView(
-                                  child: SizedBox(
-                                      height: 360,
-                                      width: 350,
-                                      child: GridView.builder(
-                                        gridDelegate:
-                                            SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: crossAxisCount,
-                                          crossAxisSpacing: 2.0,
-                                          mainAxisSpacing: 2.0,
-                                          childAspectRatio: aspectRatio,
                                         ),
-                                        itemCount: userData['number_of_posts'],
-                                        itemBuilder: (context, index) {
-                                          final post = posts[index];
-                                          return Padding(
-                                            padding: EdgeInsets.all(4.0),
-                                            child: Container(
-                                              decoration: BoxDecoration(
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      AnimatedTextKit(
+                                        animatedTexts: [
+                                          TypewriterAnimatedText(
+                                            'Nothing new.',
+                                            textStyle: const TextStyle(
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: 'Poppins'),
+                                            speed: const Duration(
+                                                milliseconds: 200),
+                                          ),
+                                          TypewriterAnimatedText(
+                                            'Add a post!',
+                                            textStyle: const TextStyle(
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: 'Poppins'),
+                                            speed: const Duration(
+                                                milliseconds: 200),
+                                          ),
+                                        ],
+                                        totalRepeatCount: 1,
+                                        pause:
+                                            const Duration(milliseconds: 100),
+                                        displayFullTextOnTap: true,
+                                        stopPauseOnTap: true,
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              )
+                            : SingleChildScrollView(
+                                child: SizedBox(
+                                    height: 300,
+                                    width: 350,
+                                    child: GridView.builder(
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: crossAxisCount,
+                                        crossAxisSpacing: 2.0,
+                                        mainAxisSpacing: 2.0,
+                                        childAspectRatio: aspectRatio,
+                                      ),
+                                      itemCount: userData['number_of_posts'],
+                                      itemBuilder: (context, index) {
+                                        final post = posts[index];
+                                        return Padding(
+                                          padding: EdgeInsets.all(4.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5)),
+                                              border: Border.all(
+                                                  color: AppColors.background,
+                                                  width: 2.0),
+                                            ),
+                                            child: ClipRRect(
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(5)),
-                                                border: Border.all(
-                                                    color: AppColors.background,
-                                                    width: 2.0),
-                                              ),
-                                              child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(5)),
-                                                  child: CachedNetworkImage(
-                                                      imageUrl:
-                                                          post['imageUrl'],
-                                                      fit: BoxFit.cover,
-                                                      progressIndicatorBuilder:
-                                                          (context, url,
-                                                                  downloadProgress) =>
-                                                              Shimmer(
-                                                                direction:
-                                                                    ShimmerDirection
-                                                                        .fromLeftToRight(), //Default value: Duration(seconds: 0)
-                                                                child:
-                                                                    Container(
-                                                                  width: 360,
-                                                                  height: 350,
-                                                                  color: Colors
-                                                                          .grey[
-                                                                      300],
-                                                                ),
-                                                              ))),
-                                            ),
-                                          );
-                                        },
-                                      )),
-                                ),
-                        ],
-                      )
-                    ],
+                                                child: CachedNetworkImage(
+                                                    imageUrl: post['imageUrl'],
+                                                    fit: BoxFit.cover,
+                                                    progressIndicatorBuilder:
+                                                        (context, url,
+                                                                downloadProgress) =>
+                                                            Shimmer(
+                                                              direction:
+                                                                  ShimmerDirection
+                                                                      .fromLeftToRight(), //Default value: Duration(seconds: 0)
+                                                              child: Container(
+                                                                width: 360,
+                                                                height: 350,
+                                                                color: Colors
+                                                                    .grey[300],
+                                                              ),
+                                                            ))),
+                                          ),
+                                        );
+                                      },
+                                    )),
+                              ),
+                      ],
+                    )
+                  ],
+                );
+              }
+            });
+      }),
+      bottomNavigationBar: BottomAppBar(
+        color: AppColors.surface,
+        child: Container(
+          height: 50.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              HomePage(current_user: widget.current_user)));
+                },
+                icon: Icon(Icons.home),
+                color: AppColors.onSurface,
+              ),
+              FloatingActionButton(
+                backgroundColor: AppColors.onSurfaceVariant,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AddPost(current_user: widget.current_user)),
                   );
-                }
-              });
-        }));
+                },
+                child: Icon(Icons.add, color: AppColors.onTertiary),
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              Profile(current_user: widget.current_user)));
+                },
+                icon: Icon(Icons.person_2_rounded),
+                color: AppColors.onSurface,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -156,7 +156,13 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              HomePage(current_user: widget.current_user)));
+                },
                 icon: Icon(Icons.home),
                 color: AppColors.onSurface,
               ),
