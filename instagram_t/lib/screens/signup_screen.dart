@@ -210,6 +210,80 @@ class _SignupScreenState extends State<SignupScreen> {
                         SizedBox(
                           height: 20,
                         ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                margin:
+                                    EdgeInsets.only(left: 30.0, right: 15.0),
+                                child: Divider(
+                                  color: Colors.black,
+                                  height: 50,
+                                ),
+                              ),
+                            ),
+                            Text("or"),
+                            Expanded(
+                              child: Container(
+                                margin:
+                                    EdgeInsets.only(left: 15.0, right: 30.0),
+                                child: Divider(
+                                  color: Colors.black,
+                                  height: 50,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 25),
+                          child: OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              padding: EdgeInsets.all(14),
+                              foregroundColor: Colors.black,
+                              backgroundColor:
+                                  Color(0xFFC4B2BC).withOpacity(0.1),
+                              side: BorderSide(
+                                  color: Color(0xFF0B3954).withOpacity(0.5)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                            ),
+                            icon: Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: Image.asset(
+                                'assets/g-logo.png',
+                                height:
+                                    18.0, // You can adjust the size as needed.
+                              ),
+                            ),
+                            label: Text('Sign up with Google'),
+                            onPressed: () async {
+                              try {
+                                var current_user =
+                                    await Auth.signInWithGoogle();
+                                if (current_user != null) {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => UserData(
+                                                current_user: current_user,
+                                              )));
+                                }
+                              } on Exception catch (e) {
+                                setState(() {
+                                  _error = e.toString();
+                                  _error = _error.replaceAll("Exception:", "");
+                                });
+                                print(e);
+                              }
+                            },
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
 
                         TextButton(
                           onPressed: () {

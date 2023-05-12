@@ -327,7 +327,7 @@ class _ProfileState extends State<Profile> {
                                         mainAxisSpacing: 2.0,
                                         childAspectRatio: aspectRatio,
                                       ),
-                                      itemCount: userData['number_of_posts'],
+                                      itemCount: posts.length,
                                       itemBuilder: (context, index) {
                                         final post = posts[index];
                                         return Padding(

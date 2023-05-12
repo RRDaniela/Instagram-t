@@ -105,6 +105,7 @@ class _InstagramtPostState extends State<InstagramtPost> {
   }
 
   Widget build(BuildContext context) {
+    final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
     return Padding(
       padding: const EdgeInsets.all(0),
       child: Container(
@@ -157,8 +158,9 @@ class _InstagramtPostState extends State<InstagramtPost> {
                             width: 360,
                             height: 360,
                             child: CachedNetworkImage(
-                              memCacheHeight: 1080,
-                              memCacheWidth: 1080,
+                              memCacheHeight: (300 * devicePixelRatio).round(),
+                              memCacheWidth: (300 * devicePixelRatio).round(),
+
 
                               imageUrl: widget.imageUrl,
                               fit: BoxFit.cover,
