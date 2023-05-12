@@ -256,6 +256,7 @@ class _ProfileState extends State<Profile> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+
                         userData['number_of_posts'] == 0
                             ? Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -344,13 +345,10 @@ class _ProfileState extends State<Profile> {
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(5)),
                                                 child: CachedNetworkImage(
+                                                    memCacheHeight: _isListView ? 1000 : 310,
+                                                    memCacheWidth: _isListView ? 1000 : 310,
                                                     imageUrl: post['imageUrl'],
-                                                    memCacheHeight: _isListView
-                                                        ? 1000
-                                                        : 310,
-                                                    memCacheWidth: _isListView
-                                                        ? 1000
-                                                        : 310,
+                                                    
                                                     fit: BoxFit.cover,
                                                     progressIndicatorBuilder:
                                                         (context, url,

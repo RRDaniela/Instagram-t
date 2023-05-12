@@ -277,6 +277,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
+
                 const SizedBox(height: 20),
                 if (_error.isNotEmpty)
                   (Container(
