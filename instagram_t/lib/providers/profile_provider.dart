@@ -37,7 +37,7 @@ class ProfileProvider with ChangeNotifier {
     _subscribeToUserData(userId);
     Provider.of<ProfileProvider>(context, listen: false)
         .updateUserData(_userData!);
-
+    posts = await getPostsForUsername(_userName);
     return _userData!;
   }
 
