@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class _ProfileState extends State<Profile> {
   late Future<Map<String, dynamic>> _userDataFuture;
   late Future<List<Map<String, dynamic>>> _postsFuture;
   bool _isListView = false;
+
   Map<String, dynamic>? _userData;
   TextStyle myTextStyle = TextStyle(
     fontSize: 15, // Set font size
@@ -39,6 +41,12 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    const colorizeColors = [
+      Colors.purple,
+      Colors.blue,
+      Colors.yellow,
+      Colors.red,
+    ];
     int crossAxisCount = _isListView ? 1 : 3;
     int itemCount = context.read<ProfileProvider>().getPostsCount().toInt();
     double aspectRatio = 1.0;
@@ -222,56 +230,114 @@ class _ProfileState extends State<Profile> {
                       ],
                     ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SingleChildScrollView(
-                          child: SizedBox(
-                              height: 360,
-                              width: 350,
-                              child: GridView.builder(
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: crossAxisCount,
-                                  crossAxisSpacing: 2.0,
-                                  mainAxisSpacing: 2.0,
-                                  childAspectRatio: aspectRatio,
-                                ),
-                                itemCount: itemCount,
-                                itemBuilder: (context, index) {
-                                  final post = posts[index];
-                                  return Padding(
-                                    padding: EdgeInsets.all(4.0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5)),
-                                        border: Border.all(
-                                            color: AppColors.background,
-                                            width: 2.0),
+                        itemCount == 0
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.all(10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Image.network(
+                                              "https://cliply.co/wp-content/uploads/2021/09/142109670_SAD_CAT_400.gif",
+                                              height: 200,
+                                              width: 200,
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      child: ClipRRect(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(5)),
-                                          child: CachedNetworkImage(
-                                              imageUrl: post['imageUrl'],
-                                              fit: BoxFit.cover,
-                                              progressIndicatorBuilder:
-                                                  (context, url,
-                                                          downloadProgress) =>
-                                                      Shimmer(
-                                                        direction: ShimmerDirection
-                                                            .fromLeftToRight(), //Default value: Duration(seconds: 0)
-                                                        child: Container(
-                                                          width: 360,
-                                                          height: 350,
-                                                          color:
-                                                              Colors.grey[300],
-                                                        ),
-                                                      ))),
-                                    ),
-                                  );
-                                },
-                              )),
-                        ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      AnimatedTextKit(
+                                        animatedTexts: [
+                                          TypewriterAnimatedText(
+                                            'Nothing new.',
+                                            textStyle: const TextStyle(
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: 'Poppins'),
+                                            speed: const Duration(
+                                                milliseconds: 200),
+                                          ),
+                                          TypewriterAnimatedText(
+                                            'Add a post!',
+                                            textStyle: const TextStyle(
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: 'Poppins'),
+                                            speed: const Duration(
+                                                milliseconds: 200),
+                                          ),
+                                        ],
+                                        totalRepeatCount: 1,
+                                        pause:
+                                            const Duration(milliseconds: 100),
+                                        displayFullTextOnTap: true,
+                                        stopPauseOnTap: true,
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              )
+                            : SingleChildScrollView(
+                                child: SizedBox(
+                                    height: 360,
+                                    width: 350,
+                                    child: GridView.builder(
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: crossAxisCount,
+                                        crossAxisSpacing: 2.0,
+                                        mainAxisSpacing: 2.0,
+                                        childAspectRatio: aspectRatio,
+                                      ),
+                                      itemCount: itemCount,
+                                      itemBuilder: (context, index) {
+                                        final post = posts[index];
+                                        return Padding(
+                                          padding: EdgeInsets.all(4.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5)),
+                                              border: Border.all(
+                                                  color: AppColors.background,
+                                                  width: 2.0),
+                                            ),
+                                            child: ClipRRect(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(5)),
+                                                child: CachedNetworkImage(
+                                                    imageUrl: post['imageUrl'],
+                                                    fit: BoxFit.cover,
+                                                    progressIndicatorBuilder:
+                                                        (context, url,
+                                                                downloadProgress) =>
+                                                            Shimmer(
+                                                              direction:
+                                                                  ShimmerDirection
+                                                                      .fromLeftToRight(), //Default value: Duration(seconds: 0)
+                                                              child: Container(
+                                                                width: 360,
+                                                                height: 350,
+                                                                color: Colors
+                                                                    .grey[300],
+                                                              ),
+                                                            ))),
+                                          ),
+                                        );
+                                      },
+                                    )),
+                              ),
                       ],
                     )
                   ],

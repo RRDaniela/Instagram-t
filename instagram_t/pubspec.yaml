@@ -37,10 +37,12 @@ dependencies:
   permission_handler: ^10.2.0
   firebase_core:
   searchbar_animation:
+  animated_text_kit:
   firebase_storage:
   flutterfire_ui:
   firebase_auth:
   cloud_firestore:
+  gif:
   provider:
   image_picker_gallery_camera:
   flutter_bloc:
