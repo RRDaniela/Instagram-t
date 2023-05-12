@@ -34,7 +34,10 @@ class _SignupScreenState extends State<SignupScreen> {
 
     if (user != null) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => HomePage(current_user: user,)),
+        MaterialPageRoute(
+            builder: (context) => HomePage(
+                  current_user: user,
+                )),
       );
     }
     return firebaseApp;
@@ -47,7 +50,6 @@ class _SignupScreenState extends State<SignupScreen> {
         body: FutureBuilder(
             future: _intializeApp(),
             builder: (context, snapshot) {
-
               if (snapshot.connectionState == ConnectionState.done) {
                 return SingleChildScrollView(
                   child: Center(
@@ -168,17 +170,23 @@ class _SignupScreenState extends State<SignupScreen> {
                               print(_passwordController.value);
 
                               try {
-
-                                User? user = await Auth.registerUsingEmailPassword(email: _emailController.text, password:  _passwordController.text);
+                                User? user =
+                                    await Auth.registerUsingEmailPassword(
+                                        email: _emailController.text,
+                                        password: _passwordController.text);
 
                                 if (user != null) {
                                   Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(builder: (context) => UserData(current_user: user)),
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            UserData(current_user: user)),
                                   );
                                 }
-                              } on FirebaseException catch (e) {
-                                print(e);
-                                _error = e.message!;
+                              } on Exception catch (e) {
+                                setState(() {
+                                  _error = e.toString();
+                                  _error = _error.replaceAll("Exception:", "");
+                                });
                               }
                             },
                             child: Container(
@@ -208,8 +216,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      LoginScreen()),
+                                  builder: (context) => LoginScreen()),
                             );
                           },
                           child: Text(
@@ -222,16 +229,30 @@ class _SignupScreenState extends State<SignupScreen> {
                                 decoration: TextDecoration.underline),
                           ),
                         ),
-
-                        Text(
-                          _error,
-                          style: TextStyle(color: Colors.red),
-                        ),
+                        if (_error.isNotEmpty)
+                          (Container(
+                            width: 300,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: AppColors.errorContainer,
+                              border: Border.all(
+                                  color: AppColors.error, width: 2.0),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: Center(
+                                child: Text(
+                                  _error,
+                                  style: TextStyle(color: AppColors.error),
+                                ),
+                              ),
+                            ),
+                          ))
                       ],
                     ),
                   ),
                 );
-              } 
+              }
 
               return Center(
                 child: CircularProgressIndicator(),

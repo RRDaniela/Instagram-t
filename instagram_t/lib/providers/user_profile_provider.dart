@@ -6,14 +6,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:instagram_t/profile.dart';
 import 'package:provider/provider.dart';
 
-class ProfileProvider with ChangeNotifier {
+class UserProfileProvider with ChangeNotifier {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
       _userDataSubscription;
 
-  ProfileProvider();
+  UserProfileProvider();
 
-  static ProfileProvider of(BuildContext context, {bool listen = false}) =>
-      Provider.of<ProfileProvider>(context, listen: listen);
+  static UserProfileProvider of(BuildContext context, {bool listen = false}) =>
+      Provider.of<UserProfileProvider>(context, listen: listen);
 
   Map<String, dynamic>? _userData;
   int _followersCount = 0;
@@ -35,9 +35,9 @@ class ProfileProvider with ChangeNotifier {
     _clearData();
     await _fetchUserData(userId);
     _subscribeToUserData(userId);
-    Provider.of<ProfileProvider>(context, listen: false)
+    Provider.of<UserProfileProvider>(context, listen: false)
         .updateUserData(_userData!);
-    posts = await getPostsForUsername(_userName);
+
     return _userData!;
   }
 
@@ -114,6 +114,10 @@ class ProfileProvider with ChangeNotifier {
     }
   }
 
+  int getPostsCount() {
+    return _postsCount;
+  }
+
   void _setFollowingCount() {
     if (_userData != null && _userData!['following_count'] != null) {
       _followingCount = _userData!['following_count'];
@@ -154,26 +158,6 @@ class ProfileProvider with ChangeNotifier {
 
   String getUsername() {
     return _userName;
-  }
-
-  Future<int> getPostsCount(String id) async {
-    int count = 0;
-    final QuerySnapshot<Map<String, dynamic>> user = await FirebaseFirestore
-        .instance
-        .collection('users')
-        .where('id', isEqualTo: id)
-        .get();
-    if (user.docs.isNotEmpty) {
-      String username = user.docs.first.data()['username'];
-
-      final QuerySnapshot<Map<String, dynamic>> postDocs =
-          await FirebaseFirestore.instance
-              .collection('posts')
-              .where('username', isEqualTo: username)
-              .get();
-      count = postDocs.docs.length;
-    }
-    return count;
   }
 
   Future<List<Map<String, dynamic>>> getPostsForUsername(String id) async {

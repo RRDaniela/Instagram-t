@@ -6,6 +6,7 @@ import 'package:instagram_t/colors.dart';
 import 'package:instagram_t/home_page.dart';
 import 'package:instagram_t/item_post.dart';
 import 'package:instagram_t/user_profile.dart';
+import 'package:searchbar_animation/searchbar_animation.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:instagram_t/models/posts.dart';
 import 'package:instagram_t/profile.dart';
@@ -50,27 +51,26 @@ class _UserListState extends State<UserList> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: (value) => searchUsers(value),
-                  onTap: () {
+                child: SearchBarAnimation(
+                  textEditingController: _searchController,
+                  isOriginalAnimation: false,
+                  buttonBorderColour: Colors.black45,
+                  trailingWidget: Icon(
+                    Icons.search,
+                    color: (AppColors.outlinedIcons),
+                  ),
+                  buttonWidget: Icon(Icons.search),
+                  secondaryButtonWidget:
+                      Icon(Icons.search, color: (AppColors.outlinedIcons)),
+                  onChanged: (value) {
+                    searchUsers(value);
                     setState(() {
                       _showGridView = false;
                     });
                   },
-                  decoration: InputDecoration(
-                      border: UnderlineInputBorder(
-                          borderSide: BorderSide(color: AppColors.outline),
-                          borderRadius: BorderRadius.circular(2.0)),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.outline),
-                        borderRadius: BorderRadius.circular(2.0),
-                      ),
-                      hintText: 'Buscar',
-                      suffixIcon: Icon(
-                        Icons.search,
-                        color: AppColors.outlinedIcons,
-                      )),
+                  onFieldSubmitted: (String value) {
+                    debugPrint('onFieldSubmitted value $value');
+                  },
                 ),
               ),
               if (_showGridView)

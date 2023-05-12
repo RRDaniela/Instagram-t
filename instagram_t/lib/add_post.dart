@@ -53,19 +53,13 @@ class _AddPostState extends State<AddPost> {
   }
 
   Future<void> _selectFromGallery() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.camera,
-      imageQuality: 70,
-      maxWidth: 300,
-      maxHeight: 300,
-    );
-    if (pickedFile != null) {
-      final tempDir = await getTemporaryDirectory();
-      final tempPath =
-          '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final tempFile = await File(pickedFile.path).copy(tempPath);
-
-      _selectedImageNotifier.value = tempFile;
+    PermissionStatus status = await Permission.camera.request();
+    if (status == PermissionStatus.granted) {
+      final pickedFile = await ImagePicker()
+          .pickImage(source: ImageSource.gallery, imageQuality: 20);
+      setState(() {
+        _selectedImageNotifier.value = File(pickedFile!.path);
+      });
     }
   }
 
