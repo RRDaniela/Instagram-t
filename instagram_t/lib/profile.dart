@@ -80,11 +80,9 @@ class _ProfileState extends State<Profile> {
                 Icons.edit,
                 color: AppColors.outlinedIcons,
               ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => UserEdit()),
-                );
+              onPressed: (){
+                Navigator.push(context,
+                MaterialPageRoute(builder: (context) => UserEdit(current_user: widget.current_user,)),);
               })
         ],
       ),

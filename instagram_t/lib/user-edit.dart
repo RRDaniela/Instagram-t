@@ -9,13 +9,17 @@ import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:instagram_t/providers/userData_provider.dart';
 
 class UserEdit extends  StatefulWidget {
-  UserEdit({super.key});
+  final User current_user;
+  UserEdit({super.key, required this.current_user});
 
   @override
   State<UserEdit> createState() => _UserEditState();
 }
 
 class _UserEditState extends State<UserEdit> {
+  String _error = "";
+  
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,18 +38,23 @@ class _UserEditState extends State<UserEdit> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  child: ClipOval(
-                    child: SizedBox(
-                      width: 100,
-                      height: 100,
-                      child: Image.network(
-                        context
-                        .read<ProfileProvider>()
-                        .getProfilePicture()
-                        .toString(),
-                        fit: BoxFit.cover,
-                      ),
-                    )),
+                  child: GestureDetector(
+                    onTap: (){
+                      
+                    },
+                    child: ClipOval(
+                      child: SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Image.network(
+                          context
+                          .read<ProfileProvider>()
+                          .getProfilePicture()
+                          .toString(),
+                          fit: BoxFit.cover,
+                        ),
+                      )),
+                  ),
                     radius: 50,
                 ),
               ],
@@ -94,7 +103,7 @@ class _UserEditState extends State<UserEdit> {
               height: 50,
               child: TextButton(
                 onPressed: (){},
-                     /* onPressed: () async {
+                    /*onPressed: () async {
                         String error = await context
                             .read<UserDataProvider>()
                             .crearUsuario();
