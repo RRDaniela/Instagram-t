@@ -79,7 +79,7 @@ class _AddPostState extends State<AddPost> {
 
       final recentAlbum = albums.first;
       final recentAssets =
-          await recentAlbum.getAssetListRange(start: 0, end: 5);
+          await recentAlbum.getAssetListRange(start: 0, end: 1);
 
       final tempDir = await getTemporaryDirectory();
       final tempFiles = await Future.wait(recentAssets.map((asset) async {
@@ -102,23 +102,20 @@ class _AddPostState extends State<AddPost> {
   }
 
   Future<void> _takePhoto() async {
+    print('Taking photo...');
     try {
       var pickedFile = await ImagePicker().pickImage(
-        source: ImageSource.camera,
-        imageQuality: 70,
-        maxWidth: 300,
-        maxHeight: 300,
+        source: ImageSource.camera
       );
 
       if (pickedFile != null) {
-        final tempDir = await getTemporaryDirectory();
-        final tempPath =
-            '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
-        final tempFile = await File(pickedFile.path).copy(tempPath);
+        final photo = pickedFile.path;
 
         setState(() {
-          _selectedImageNotifier.value = tempFile;
+          _selectedImageNotifier.value = File(photo);
         });
+
+        
       }
     } catch (e, stackTrace) {
       print('Error taking photo: $e');
@@ -181,7 +178,7 @@ class _AddPostState extends State<AddPost> {
                       decoration: BoxDecoration(
                         color: Colors.grey,
                         image: DecorationImage(
-                          image: FileImage(selectedImage),
+                          image: Image.file(selectedImage, cacheHeight: 1000, cacheWidth: 1000,).image,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -206,7 +203,7 @@ class _AddPostState extends State<AddPost> {
               IconButton(
                   onPressed: _selectFromGallery, icon: Icon(Icons.photo)),
               IconButton(
-                onPressed: _takePhoto,
+                onPressed:  () async => _takePhoto(),
                 icon: Icon(Icons.photo_camera),
               )
             ],
@@ -230,9 +227,9 @@ class _AddPostState extends State<AddPost> {
                           onTap: () {
                             _selectedImageNotifier.value = file;
                             // Set the tapped image as the current image
-                            /*setState(() {
+                            /* setState(() {
                             currentImage = file;
-                          });*/
+                          }); */
                           },
                           child: Image.file(file, fit: BoxFit.cover),
                         );

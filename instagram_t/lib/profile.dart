@@ -249,6 +249,8 @@ class _ProfileState extends State<Profile> {
                                               Radius.circular(5)),
                                           child: CachedNetworkImage(
                                               imageUrl: post['imageUrl'],
+                                              memCacheHeight: _isListView ? 1000 : 310,
+                                              memCacheWidth: _isListView ? 1000 : 310,
                                               fit: BoxFit.cover,
                                               progressIndicatorBuilder:
                                                   (context, url,

@@ -56,7 +56,7 @@ class _UserProfileState extends State<UserProfile> {
   Widget build(BuildContext context) {
     int crossAxisCount = _isListView ? 1 : 3;
     double aspectRatio = 1.0;
-  
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.background,
@@ -88,6 +88,8 @@ class _UserProfileState extends State<UserProfile> {
                                 width: 100,
                                 height: 100,
                                 child: Image.network(
+                                  cacheHeight: 100,
+                                  cacheWidth: 100,
                                   context
                                       .read<ProfileProvider>()
                                       .getProfilePicture()
@@ -164,9 +166,7 @@ class _UserProfileState extends State<UserProfile> {
                         children: [
                           Column(
                             children: [
-                              Text(
-                                  style: myTextStyle,
-                                  posts.length.toString()),
+                              Text(style: myTextStyle, posts.length.toString()),
                               Text(
                                   style: TextStyle(
                                       fontSize: 15,
@@ -293,6 +293,8 @@ class _UserProfileState extends State<UserProfile> {
                                                 Radius.circular(5)),
                                             child: CachedNetworkImage(
                                                 imageUrl: post['imageUrl'],
+                                                memCacheHeight: 1014,
+                                                memCacheWidth: 1014,
                                                 fit: BoxFit.cover,
                                                 progressIndicatorBuilder:
                                                     (context, url,

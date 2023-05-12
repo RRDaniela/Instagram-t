@@ -128,9 +128,10 @@ class _InstagramtPostState extends State<InstagramtPost> {
                       children: [
                         CircleAvatar(
                           radius: 20.0,
-                          backgroundImage: CachedNetworkImageProvider(
+                          backgroundImage: NetworkImage(
                             _profileImageUrl ??
                                 'https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg',
+                                
                           ),
                         ),
                         SizedBox(width: 8.0),
@@ -156,6 +157,9 @@ class _InstagramtPostState extends State<InstagramtPost> {
                             width: 360,
                             height: 360,
                             child: CachedNetworkImage(
+                              memCacheHeight: 1080,
+                              memCacheWidth: 1080,
+
                               imageUrl: widget.imageUrl,
                               fit: BoxFit.cover,
                               progressIndicatorBuilder:
