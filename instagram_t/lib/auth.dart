@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Auth {
   static Future<User?> registerUsingEmailPassword({
@@ -59,6 +60,83 @@ class Auth {
 
     return user;
   }
+
+  static Future signupWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser!.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    User? user;
+
+    try {
+      UserCredential userCredential =
+          await auth.signInWithCredential(credential);
+      user = userCredential.user;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'account-exists-with-different-credential') {
+        throw Exception('The account already exists with a different credential.');
+      } else if (e.code == 'invalid-credential') {
+        throw Exception('Error occurred while accessing credentials. Try again.');
+      }
+    } catch (e) {
+      throw Exception('Error occurred using Google Sign-In. Try again.');
+    }
+
+    return user;
+  }
+
+  static Future signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    if (googleUser == null) {
+        throw Exception('Google Sign In was unsuccessful. Try again.');
+    }
+
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    User? user;
+
+    try {
+        UserCredential userCredential = await auth.signInWithCredential(credential);
+        user = userCredential.user;
+
+        // Check if user is new
+        if (userCredential.additionalUserInfo!.isNewUser) {
+            // If new, fail and ask user to sign up
+            throw Exception('Please sign up first.');
+        }
+    } on FirebaseAuthException catch (e) {
+        if (e.code == 'account-exists-with-different-credential') {
+            throw Exception('The account already exists with a different credential.');
+        } else if (e.code == 'invalid-credential') {
+            throw Exception('Error occurred while accessing credentials. Try again.');
+        } else if (e.code == 'user-not-found') {
+            throw Exception('No user found for this email.');
+        } else if (e.code == 'wrong-password') {
+            throw Exception('Wrong password provided for that user.');
+        }
+    } catch (e) {
+        throw Exception('Error occurred using Google Sign-In. Try again.');
+    }
+
+    return user;
+}
+
 
   static Future<User?> refreshUser(User user) async {
     FirebaseAuth auth = FirebaseAuth.instance;

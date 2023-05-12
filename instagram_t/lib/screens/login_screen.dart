@@ -235,7 +235,25 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     label: Text('Sign in with Google'),
-                    onPressed: () {},
+                    onPressed: () async {
+                      try {
+                        var current_user = await Auth.signInWithGoogle();
+                        if (current_user != null) {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomePage(
+                                        current_user: current_user,
+                                      )));
+                        }
+                      } on Exception catch (e) {
+                        setState(() {
+                          _error = e.toString();
+                          _error = _error.replaceAll("Exception:", "");
+                        });
+                        print(e);
+                      }
+                    },
                   ),
                 ),
 
@@ -258,6 +276,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontWeight: FontWeight.w600),
                   ),
                 ),
+
 
                 const SizedBox(height: 20),
                 if (_error.isNotEmpty)
