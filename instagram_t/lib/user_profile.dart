@@ -12,6 +12,9 @@ import 'package:instagram_t/resources/firestore_methods.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
+import 'package:instagram_t/screens/followers_page.dart';
+import 'package:instagram_t/screens/following_page.dart';
+
 
 class UserProfile extends StatefulWidget {
   final User current_user;
@@ -182,35 +185,55 @@ class _UserProfileState extends State<UserProfile> {
                                 "posts")
                           ],
                         ),
-                        Column(
-                          children: [
-                            Text(
-                                style: myTextStyle,
-                                context
-                                    .read<UserProfileProvider>()
-                                    .getFollowersCount()
-                                    .toString()),
-                            Text(
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: AppColors.textColorGrey),
-                                "followers")
-                          ],
+                        GestureDetector(
+                          onTap: (){
+                              Navigator.push(
+                                context, 
+                                MaterialPageRoute(
+                                  builder: (context) => FollowersPage(user_follow: {
+                                    'id': widget.user_follow!['id'],
+                                  },)));
+                            },
+                          child: Column(
+                            children: [
+                              Text(
+                                  style: myTextStyle,
+                                  context
+                                      .read<UserProfileProvider>()
+                                      .getFollowersCount()
+                                      .toString()),
+                              Text(
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: AppColors.textColorGrey),
+                                  "followers")
+                            ],
+                          ),
                         ),
-                        Column(
-                          children: [
-                            Text(
-                                style: myTextStyle,
-                                context
-                                    .read<UserProfileProvider>()
-                                    .getFollowingCount()
-                                    .toString()),
-                            Text(
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: AppColors.textColorGrey),
-                                "following")
-                          ],
+                        GestureDetector(
+                          onTap: (){
+                              Navigator.push(
+                                context, 
+                                MaterialPageRoute(
+                                  builder: (context) => FollowingPage(user_follow: {
+                                    'id': widget.user_follow!['id'],
+                                  },)));
+                            },
+                          child: Column(
+                            children: [
+                              Text(
+                                  style: myTextStyle,
+                                  context
+                                      .read<UserProfileProvider>()
+                                      .getFollowingCount()
+                                      .toString()),
+                              Text(
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: AppColors.textColorGrey),
+                                  "following")
+                            ],
+                          ),
                         )
                       ],
                     ),
