@@ -58,6 +58,7 @@ dependencies:
   shimmer_animation: ^2.1.0
   image_cropper: ^3.0.3
   google_sign_in: ^5.4.4
+  image: ^4.0.15
   flutter_image_compress: ^2.0.2
   flutter_native_image: ^0.0.6+1
 

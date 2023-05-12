@@ -57,8 +57,36 @@ class _AddPostState extends State<AddPost> {
     if (status == PermissionStatus.granted) {
       final pickedFile = await ImagePicker()
           .pickImage(source: ImageSource.gallery, imageQuality: 20);
+      CroppedFile? croppedFile = await ImageCropper().cropImage(
+        sourcePath: pickedFile!.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: 'Cropper',
+              toolbarColor: AppColors.navBar,
+              toolbarWidgetColor: AppColors.navBarButton,
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: false),
+          IOSUiSettings(
+            title: 'Cropper',
+          ),
+          WebUiSettings(
+            context: context,
+          ),
+        ],
+      );
+
       setState(() {
-        _selectedImageNotifier.value = File(pickedFile!.path);
+        if (croppedFile != null) {
+          _selectedImageNotifier.value = File(croppedFile.path);
+        }
+        ;
       });
     }
   }
@@ -98,9 +126,8 @@ class _AddPostState extends State<AddPost> {
   Future<void> _takePhoto() async {
     print('Taking photo...');
     try {
-      var pickedFile = await ImagePicker().pickImage(
-        source: ImageSource.camera
-      );
+      var pickedFile =
+          await ImagePicker().pickImage(source: ImageSource.camera);
 
       if (pickedFile != null) {
         final photo = pickedFile.path;
@@ -108,8 +135,6 @@ class _AddPostState extends State<AddPost> {
         setState(() {
           _selectedImageNotifier.value = File(photo);
         });
-
-        
       }
     } catch (e, stackTrace) {
       print('Error taking photo: $e');
@@ -172,7 +197,11 @@ class _AddPostState extends State<AddPost> {
                       decoration: BoxDecoration(
                         color: Colors.grey,
                         image: DecorationImage(
-                          image: Image.file(selectedImage, cacheHeight: 1000, cacheWidth: 1000,).image,
+                          image: Image.file(
+                            selectedImage,
+                            cacheHeight: 1000,
+                            cacheWidth: 1000,
+                          ).image,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -197,7 +226,7 @@ class _AddPostState extends State<AddPost> {
               IconButton(
                   onPressed: _selectFromGallery, icon: Icon(Icons.photo)),
               IconButton(
-                onPressed:  () async => _takePhoto(),
+                onPressed: () async => _takePhoto(),
                 icon: Icon(Icons.photo_camera),
               )
             ],
