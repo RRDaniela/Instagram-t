@@ -120,7 +120,7 @@ class Auth {
             // If new, fail and ask user to sign up
             throw Exception('Please sign up first.');
         }
-    } catch (FirebaseAuthException e) {
+    } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
             throw Exception('The account already exists with a different credential.');
         } else if (e.code == 'invalid-credential') {
@@ -130,6 +130,8 @@ class Auth {
         } else if (e.code == 'wrong-password') {
             throw Exception('Wrong password provided for that user.');
         }
+    } catch (e) {
+        throw Exception('Error occurred using Google Sign-In. Try again.');
     }
 
     return user;
