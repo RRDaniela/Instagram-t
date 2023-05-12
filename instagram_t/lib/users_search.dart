@@ -5,6 +5,7 @@ import 'package:flutterfire_ui/firestore.dart';
 import 'package:instagram_t/colors.dart';
 import 'package:instagram_t/home_page.dart';
 import 'package:instagram_t/item_post.dart';
+import 'package:instagram_t/screens/post_info.dart';
 import 'package:instagram_t/user_profile.dart';
 import 'package:searchbar_animation/searchbar_animation.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
@@ -114,19 +115,46 @@ class _UserListState extends State<UserList> {
                             itemBuilder: (context, index) {
                               final imageUrl = (documents[index].data()
                                   as Map<String, dynamic>)['imageUrl'];
-                              return CachedNetworkImage(
-                                imageUrl: imageUrl,
-                                placeholder: (context, url) => Shimmer(
-                                  direction: ShimmerDirection
-                                      .fromLeftToRight(), //Default value: Duration(seconds: 0)
-                                  child: Container(
-                                    width: 300,
-                                    height: 300,
-                                    color: Colors.grey[300],
+                              final likes = (documents[index].data()
+                                  as Map<String, dynamic>)['likes'];
+                              final postId = (documents[index].data()
+                                  as Map<String, dynamic>)['id'];
+                              final username = (documents[index].data()
+                                  as Map<String, dynamic>)['username'];
+                              final caption = (documents[index].data()
+                                  as Map<String, dynamic>)['caption'];
+
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PostInfo(
+                                        Nlikes: likes.toString(),
+                                        postId: postId.toString(),
+                                        imageUrl: imageUrl.toString(),
+                                        username: username.toString(),
+                                        caption: caption.toString(),
+                                        current_user: widget.current_user,
+                                        user: widget.current_user,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: CachedNetworkImage(
+                                  imageUrl: imageUrl,
+                                  placeholder: (context, url) => Shimmer(
+                                    direction: ShimmerDirection
+                                        .fromLeftToRight(), //Default value: Duration(seconds: 0)
+                                    child: Container(
+                                      width: 300,
+                                      height: 300,
+                                      color: Colors.grey[300],
+                                    ),
                                   ),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
                                 ),
-                                errorWidget: (context, url, error) =>
-                                    Icon(Icons.error),
                               );
                             },
                           );

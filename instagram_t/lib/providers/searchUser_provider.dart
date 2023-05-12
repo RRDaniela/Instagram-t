@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:instagram_t/post_comments.dart';
 
 import '../user_profile.dart';
 
@@ -45,6 +46,22 @@ class SearchUserProvider with ChangeNotifier {
           builder: (context) => UserProfile(
             current_user: currentUser,
             user_follow: user,
+          ),
+        ),
+      );
+    }
+  }
+
+  void navigateToComments(
+      BuildContext context, String username, String postId) async {
+    final user = await getUserIdFromUsername(username);
+    if (user != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PostComments(
+            postId: postId,
+            user_id: username,
           ),
         ),
       );

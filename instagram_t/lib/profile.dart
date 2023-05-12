@@ -6,7 +6,9 @@ import 'package:instagram_t/add_post.dart';
 import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/colors.dart';
 import 'package:instagram_t/home_page.dart';
+import 'package:instagram_t/item_post.dart';
 import 'package:instagram_t/providers/profile_provider.dart';
+import 'package:instagram_t/screens/post_info.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
@@ -79,9 +81,14 @@ class _ProfileState extends State<Profile> {
                 Icons.edit,
                 color: AppColors.outlinedIcons,
               ),
-              onPressed: (){
-                Navigator.push(context,
-                MaterialPageRoute(builder: (context) => UserEdit(current_user: widget.current_user,)),);
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => UserEdit(
+                            current_user: widget.current_user,
+                          )),
+                );
               })
         ],
       ),
@@ -256,7 +263,6 @@ class _ProfileState extends State<Profile> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-
                         userData['number_of_posts'] == 0
                             ? Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -333,37 +339,73 @@ class _ProfileState extends State<Profile> {
                                         final post = posts[index];
                                         return Padding(
                                           padding: EdgeInsets.all(4.0),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5)),
-                                              border: Border.all(
-                                                  color: AppColors.background,
-                                                  width: 2.0),
-                                            ),
-                                            child: ClipRRect(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PostInfo(
+                                                            Nlikes:
+                                                                post['likes']
+                                                                    .toString(),
+                                                            postId: post['id']
+                                                                .toString(),
+                                                            imageUrl:
+                                                                post['imageUrl']
+                                                                    .toString(),
+                                                            username:
+                                                                post['username']
+                                                                    .toString(),
+                                                            caption:
+                                                                post['caption']
+                                                                    .toString(),
+                                                            current_user: widget
+                                                                .current_user,
+                                                            user: widget
+                                                                .current_user,
+                                                          )));
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(5)),
-                                                child: CachedNetworkImage(
-                                                    memCacheHeight: _isListView ? 1000 : 310,
-                                                    memCacheWidth: _isListView ? 1000 : 310,
-                                                    imageUrl: post['imageUrl'],
-                                                    
-                                                    fit: BoxFit.cover,
-                                                    progressIndicatorBuilder:
-                                                        (context, url,
-                                                                downloadProgress) =>
-                                                            Shimmer(
-                                                              direction:
-                                                                  ShimmerDirection
-                                                                      .fromLeftToRight(), //Default value: Duration(seconds: 0)
-                                                              child: Container(
-                                                                width: 360,
-                                                                height: 350,
-                                                                color: Colors
-                                                                    .grey[300],
-                                                              ),
-                                                            ))),
+                                                border: Border.all(
+                                                    color: AppColors.background,
+                                                    width: 2.0),
+                                              ),
+                                              child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(5)),
+                                                  child: CachedNetworkImage(
+                                                      memCacheHeight:
+                                                          _isListView
+                                                              ? 1000
+                                                              : 310,
+                                                      memCacheWidth: _isListView
+                                                          ? 1000
+                                                          : 310,
+                                                      imageUrl:
+                                                          post['imageUrl'],
+                                                      fit: BoxFit.cover,
+                                                      progressIndicatorBuilder:
+                                                          (context, url,
+                                                                  downloadProgress) =>
+                                                              Shimmer(
+                                                                direction:
+                                                                    ShimmerDirection
+                                                                        .fromLeftToRight(), //Default value: Duration(seconds: 0)
+                                                                child:
+                                                                    Container(
+                                                                  width: 360,
+                                                                  height: 350,
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      300],
+                                                                ),
+                                                              ))),
+                                            ),
                                           ),
                                         );
                                       },

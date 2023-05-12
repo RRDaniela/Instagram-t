@@ -31,6 +31,7 @@ class PostProvider {
       'caption': caption,
       'imageUrl': imageUrl,
       'likes': [],
+      'comments': [],
       'username': await getUserName(userId),
       'timestamp': await Timestamp.fromDate(timestamp),
       'likes_count': 0

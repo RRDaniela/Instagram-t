@@ -247,6 +247,8 @@ class _HomePageState extends State<HomePage> {
                                       caption: listElements[index]["caption"]!,
                                       postId: listElements[index]["postId"]!,
                                       Nlikes: listElements[index]["Nlikes"]!,
+                                      current_user: widget.current_user,
+                                      user: widget.current_user,
                                     ),
                                   );
                                 },

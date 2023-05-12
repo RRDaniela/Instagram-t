@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:instagram_t/auth.dart';
+import 'package:instagram_t/post_comments.dart';
 import 'package:instagram_t/resources/firestore_methods.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +14,8 @@ class InstagramtPost extends StatefulWidget {
   final String username;
   final String caption;
   final String Nlikes;
+  final User current_user;
+
   const InstagramtPost({
     super.key,
     required this.imageUrl,
@@ -19,6 +23,8 @@ class InstagramtPost extends StatefulWidget {
     required this.caption,
     required this.postId,
     required this.Nlikes,
+    required this.current_user,
+    required User user,
   });
 
   // Find profile image from username using firebase
@@ -41,7 +47,7 @@ class _InstagramtPostState extends State<InstagramtPost> {
 
     getLikesCount(widget.postId).then((value) => setState(() {
           _likesCount = value;
-    }));
+        }));
   }
 
   Future<void> decrementLikesCount(String postId) async {
@@ -53,14 +59,20 @@ class _InstagramtPostState extends State<InstagramtPost> {
 
     getLikesCount(widget.postId).then((value) => setState(() {
           _likesCount = value;
-    }));
-    
+        }));
   }
 
   Future<int> getLikesCount(String postId) async {
     final postSnapshot =
         await FirebaseFirestore.instance.collection('posts').doc(postId).get();
-    return postSnapshot['likes_count'];
+
+    final data = postSnapshot.data();
+    if (data != null && data.containsKey('likes_count')) {
+      final likesCount = data['likes_count'] as int;
+      return likesCount;
+    } else {
+      return 0; // Default value if likes_count is not present or document doesn't exist
+    }
   }
 
   Future<void> _checkLikeStatus() async {
@@ -78,7 +90,7 @@ class _InstagramtPostState extends State<InstagramtPost> {
     _checkLikeStatus();
     getLikesCount(widget.postId).then((value) => setState(() {
           _likesCount = value;
-    }));
+        }));
   }
 
   Future<String> getProfileImageUrl(String username) async {
@@ -132,7 +144,6 @@ class _InstagramtPostState extends State<InstagramtPost> {
                           backgroundImage: NetworkImage(
                             _profileImageUrl ??
                                 'https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg',
-                                
                           ),
                         ),
                         SizedBox(width: 8.0),
@@ -160,8 +171,6 @@ class _InstagramtPostState extends State<InstagramtPost> {
                             child: CachedNetworkImage(
                               memCacheHeight: (300 * devicePixelRatio).round(),
                               memCacheWidth: (300 * devicePixelRatio).round(),
-
-
                               imageUrl: widget.imageUrl,
                               fit: BoxFit.cover,
                               progressIndicatorBuilder:
@@ -217,7 +226,15 @@ class _InstagramtPostState extends State<InstagramtPost> {
                                     : AppColors.onSurfaceVariant,
                               )),
                           IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => PostComments(
+                                              postId: widget.postId,
+                                              user_id: widget.current_user.uid,
+                                            )));
+                              },
                               icon: Icon(
                                 Icons.message_outlined,
                                 size: 20,
