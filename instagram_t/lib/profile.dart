@@ -7,6 +7,7 @@ import 'package:instagram_t/colors.dart';
 import 'package:instagram_t/providers/profile_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
+import 'package:instagram_t/user-edit.dart';
 
 class Profile extends StatefulWidget {
   final User current_user;
@@ -60,6 +61,17 @@ class _ProfileState extends State<Profile> {
           title: Text(
             context.read<ProfileProvider>().getUsername().toLowerCase(),
           ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.edit,
+                color: AppColors.outlinedIcons,
+              ),
+              onPressed: (){
+                Navigator.push(context,
+                MaterialPageRoute(builder: (context) => UserEdit()),);
+              })
+          ],
         ),
         body: FutureBuilder(
             future: Future.wait([_userDataFuture, _postsFuture]),
