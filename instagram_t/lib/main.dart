@@ -27,6 +27,8 @@ void main() {
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
+  bool debugInvertOversizedImages = true;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

@@ -77,15 +77,20 @@ class Auth {
 
   // Create method to check if user is logged in
   static Future<bool> isLoggedIn() async {
-    FirebaseApp firebaseApp = await Firebase.initializeApp();
-    FirebaseAuth auth = FirebaseAuth.instance;
+    try {
+      FirebaseApp firebaseApp = await Firebase.initializeApp();
+      FirebaseAuth auth = FirebaseAuth.instance;
 
-    User? user = auth.currentUser;
+      User? user = auth.currentUser;
 
-    await user?.reload();
-    user = auth.currentUser;
+      await user?.reload();
+      user = auth.currentUser;
 
-    if (user == null) {
+      if (user == null) {
+        return false;
+      }
+    } catch (e) {
+      print(e);
       return false;
     }
 

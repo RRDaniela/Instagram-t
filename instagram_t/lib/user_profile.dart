@@ -61,12 +61,8 @@ class _UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     int crossAxisCount = _isListView ? 1 : 3;
-    int itemCount = context.read<UserProfileProvider>().getPostsCount().toInt();
     double aspectRatio = 1.0;
-    if (itemCount > 4 && !_isListView) {
-      crossAxisCount = 3;
-      aspectRatio = 1.0;
-    }
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.background,
@@ -98,6 +94,8 @@ class _UserProfileState extends State<UserProfile> {
                                 width: 100,
                                 height: 100,
                                 child: Image.network(
+                                  cacheHeight: 100,
+                                  cacheWidth: 100,
                                   context
                                       .read<UserProfileProvider>()
                                       .getProfilePicture()
@@ -174,12 +172,7 @@ class _UserProfileState extends State<UserProfile> {
                         children: [
                           Column(
                             children: [
-                              Text(
-                                  style: myTextStyle,
-                                  context
-                                      .read<UserProfileProvider>()
-                                      .getPostsCount()
-                                      .toString()),
+                              Text(style: myTextStyle, posts.length.toString()),
                               Text(
                                   style: TextStyle(
                                       fontSize: 15,
@@ -291,7 +284,7 @@ class _UserProfileState extends State<UserProfile> {
                                         mainAxisSpacing: 2.0,
                                         childAspectRatio: aspectRatio,
                                       ),
-                                      itemCount: itemCount,
+                                      itemCount: posts.length,
                                       itemBuilder: (context, index) {
                                         final post = posts[index];
                                         return Padding(
@@ -309,6 +302,8 @@ class _UserProfileState extends State<UserProfile> {
                                                     Radius.circular(5)),
                                                 child: CachedNetworkImage(
                                                     imageUrl: post['imageUrl'],
+                                                    memCacheHeight: 1014,
+                                                    memCacheWidth: 1014,
                                                     fit: BoxFit.cover,
                                                     progressIndicatorBuilder:
                                                         (context, url,

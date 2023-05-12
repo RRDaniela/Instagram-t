@@ -57,6 +57,9 @@ dependencies:
   skeletons: ^0.0.3
   shimmer_animation: ^2.1.0
   image_cropper: ^3.0.3
+  google_sign_in: ^5.4.4
+  flutter_image_compress: ^2.0.2
+  flutter_native_image: ^0.0.6+1
 
 dev_dependencies:
   flutter_test:
@@ -88,6 +91,7 @@ flutter:
   assets:
     - assets/logo.png
     - assets/logo-no-background.png
+    - assets/g-logo.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

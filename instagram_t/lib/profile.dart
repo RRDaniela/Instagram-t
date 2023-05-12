@@ -62,12 +62,11 @@ class _ProfileState extends State<Profile> {
       Colors.red,
     ];
     int crossAxisCount = _isListView ? 1 : 3;
-    int itemCount = context.read<ProfileProvider>().getPostsCount().toInt();
     double aspectRatio = 1.0;
-    if (itemCount > 4 && !_isListView) {
+    /* if (itemCount > 4 && !_isListView) {
       crossAxisCount = 3;
       aspectRatio = 1.0;
-    }
+    } */
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.background,
@@ -160,12 +159,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Column(
                             children: [
-                              Text(
-                                  style: myTextStyle,
-                                  context
-                                      .read<ProfileProvider>()
-                                      .getPostsCount()
-                                      .toString()),
+                              Text(style: myTextStyle, posts.length.toString()),
                               Text(
                                   style: TextStyle(
                                       fontSize: 15,
@@ -351,6 +345,12 @@ class _ProfileState extends State<Profile> {
                                                     Radius.circular(5)),
                                                 child: CachedNetworkImage(
                                                     imageUrl: post['imageUrl'],
+                                                    memCacheHeight: _isListView
+                                                        ? 1000
+                                                        : 310,
+                                                    memCacheWidth: _isListView
+                                                        ? 1000
+                                                        : 310,
                                                     fit: BoxFit.cover,
                                                     progressIndicatorBuilder:
                                                         (context, url,

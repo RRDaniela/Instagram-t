@@ -6,6 +6,7 @@ import 'package:instagram_t/auth.dart';
 import 'package:instagram_t/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram_t/home_page.dart';
+import 'package:instagram_t/resources/image_compression.dart';
 import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -113,11 +114,15 @@ class _AddPictureState extends State<AddPicture> {
                       if (status == PermissionStatus.granted) {
                         final pickedFile = await ImagePicker().pickImage(
                             source: ImageSource.gallery, imageQuality: 20);
+
+                        final compressedImage = await ImageCompress.compressFile(
+                            File(pickedFile!.path));
                         setState(() {
-                          pickedImage = File(pickedFile!.path);
+                          pickedImage = compressedImage;
                         });
 
-                        File file = File(pickedFile!.path);
+                        File file = await ImageCompress.compressFile(
+                            File(pickedFile!.path));
                         try {
                           Reference storageReference = FirebaseStorage.instance
                               .ref('ProfilePictures/${widget.username}.jpg');

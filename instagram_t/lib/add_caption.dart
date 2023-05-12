@@ -67,6 +67,8 @@ class _AddCaptionState extends State<AddCaption> {
             child: Image.file(
               widget.imageFile,
               fit: BoxFit.cover,
+              cacheHeight: 1000,
+              cacheWidth: 1000,
             ),
           ),
           Padding(
